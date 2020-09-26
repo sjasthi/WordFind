@@ -185,7 +185,7 @@ function addFoils(){
     //add random dummy characters to board
     $language = $_SESSION['language'];
     global $board, $boardData;
-	$myfile = fopen("telugu_seed.txt", "r") or die("Unable to open file!");
+	$myfile = fopen("helpers/telugu_seed.txt", "r") or die("Unable to open file!");
 //echo fread($myfile,filesize("telugu_seed.txt"));
 $lines=array();
 $word=array();

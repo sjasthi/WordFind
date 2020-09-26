@@ -1,44 +1,14 @@
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
-<head>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favico.ico">
+<?php 
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    $page_title = 'Word Find';
+    include('inc/header.php');
 
-    <!-- Latest compiled JavaScript -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale = 1">
-    <title>Word Find</title>
-</head>
-<script>
-function fctCheck(language) {
-  		var elems = document.getElementsByName("fillerTypes");
-  		for (var i = 0; i < elems.length; i++) {
-  			elems.item(i).style.display = "none";
-  		}
-  		document.getElementById(language).style.display = "block";
-  	}
- function changeTest(obj){
-    alert(obj.options[obj.selectedIndex].value);
-  }
-</script>
-<body>
-
+?>
 
 <form action="getInfo.php" method="GET" target="_blank">
     <div class="container-fluid">
 
-        <div class="jumbotron" id="jumbos">
-
-        </div>
+        <div class="jumbotron" id="jumbos"></div>
         <div class="panel">
             <div class="panel-group">
                 <div class="panel panel-primary">
@@ -68,8 +38,7 @@ function fctCheck(language) {
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label for="height">Enter Height</label>
-                                        <input type="number" class="form-control" id="height" min="10" max="50" name="height" value="10"
-                                               placeholder="10">
+                                        <input type="number" class="form-control" id="height" min="10" max="50" name="height" value="10" placeholder="10">
                                     </div>
 
                                 </div>
@@ -77,8 +46,7 @@ function fctCheck(language) {
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label for="width">Enter Width</label>
-                                        <input type="number" class="form-control" id="width" min="10" max="50" name="width" value="10"
-                                               placeholder="10">
+                                        <input type="number" class="form-control" id="width" min="10" max="50" name="width" value="10" placeholder="10">
                                     </div>
                                 </div>
                             <div class="form-group">
@@ -90,10 +58,6 @@ function fctCheck(language) {
                                     </select>
                                 </div>
                             </div>
-
-
-
-
 
                         </div>
                         <div class="row">
@@ -128,34 +92,34 @@ function fctCheck(language) {
                                     <label for="fillerTypes">Filler Character Types</label>
 
 					<select class="form-control" id="Hindi" name="fillerTypes" style="display:none">
-                                                <option value="Any" selected="selected">Any</option>
-                                                <option value="Consonants">Consonants</option>
-                                                <option value="Vowels">Vowels</option>
-                                                <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                                                <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                                                <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                                                <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                                        </select>
+                        <option value="Any" selected="selected">Any</option>
+                        <option value="Consonants">Consonants</option>
+                        <option value="Vowels">Vowels</option>
+                        <option value="SCB">SINGLE CONSONANT BLENDS</option>
+                        <option value="DCB">DOUBLE CONSONANT BLENDS</option>
+                        <option value="TCB">TRIPLE CONSONANT BLENDS</option>
+                        <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
+                    </select>
 
 					<select class="form-control" id="Gujarati" name="fillerTypes" style="display:none">
-                                                <option value="Any" selected="selected">Any</option>
-                                                <option value="Consonants">Consonants</option>
-                                                <option value="Vowels">Vowels</option>
-                                                <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                                                <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                                                <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                                                <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                                        </select>
+                        <option value="Any" selected="selected">Any</option>
+                        <option value="Consonants">Consonants</option>
+                        <option value="Vowels">Vowels</option>
+                        <option value="SCB">SINGLE CONSONANT BLENDS</option>
+                        <option value="DCB">DOUBLE CONSONANT BLENDS</option>
+                        <option value="TCB">TRIPLE CONSONANT BLENDS</option>
+                        <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
+                </select>
 
 					<select class="form-control" id="Malayalam" name="fillerTypes" style="display:none">
-                                                <option value="Any" selected="selected">Any</option>
-                                                <option value="Consonants">Consonants</option>
-                                                <option value="Vowels">Vowels</option>
-                                                <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                                                <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                                                <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                                                <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                                        </select>
+                            <option value="Any" selected="selected">Any</option>
+                            <option value="Consonants">Consonants</option>
+                            <option value="Vowels">Vowels</option>
+                            <option value="SCB">SINGLE CONSONANT BLENDS</option>
+                            <option value="DCB">DOUBLE CONSONANT BLENDS</option>
+                            <option value="TCB">TRIPLE CONSONANT BLENDS</option>
+                            <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
+                    </select>
 
 					<select class="form-control" id="English" name="fillerTypes" style="display:none">
 						<option value="Any" selected="selected">Any</option>
@@ -163,14 +127,14 @@ function fctCheck(language) {
 						<option value="Vowels">Vowels</option>
 					</select>
 					<select class="form-control" id="Telugu" name="fillerTypes">
-                                                <option value="Any" selected="selected">Any</option>
-                                                <option value="Consonants">Consonants</option>
-                                                <option value="Vowels">Vowels</option>
-                                                <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                                                <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                                                <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                                                <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                                        </select>
+                            <option value="Any" selected="selected">Any</option>
+                            <option value="Consonants">Consonants</option>
+                            <option value="Vowels">Vowels</option>
+                            <option value="SCB">SINGLE CONSONANT BLENDS</option>
+                            <option value="DCB">DOUBLE CONSONANT BLENDS</option>
+                            <option value="TCB">TRIPLE CONSONANT BLENDS</option>
+                            <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
+                    </select>
                                 </div>
                             </div>
 
@@ -184,5 +148,5 @@ function fctCheck(language) {
         </div>
     </div>
 </form>
-</body>
-</html>
+
+<?php include('inc/footer.php'); ?>
