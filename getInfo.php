@@ -5,7 +5,6 @@
     include('inc/header.php');
 ?>
 
-
 <script src="js/solutionRectangles.js"></script>
 
 <div class="jumbotron" id="jumbos"></div>
