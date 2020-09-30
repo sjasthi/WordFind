@@ -1,6 +1,7 @@
-﻿html {
-	font-family: Helvetica, Arial, sans-serif;
+﻿body {
+	min-height:100vh;
 }
+
 .jumbotron {
 	background-image: url("../img/silcHeader.png");
 	-webkit-background-size: 100% 100%;
@@ -11,18 +12,19 @@
 }
 
 table, th, tr, td {
-
 	border-collapse: collapse;
 	padding: 5px;
 	font-size: 36px;
-
 }
+
+
 .totals {
 	border-style: none;
 	border-bottom: none;
 	border-top: none;
 	font-size: 1.2em;
 }
+
 .pass {
 	color: green;
 }
@@ -30,19 +32,7 @@ table, th, tr, td {
 .fail {
 	color: red;
 }
-body { 
-	font-family: "Helvetica", Verdana, sans-serif;
-	font-size: 1.1em;
-	background-color: white;
-	margin-left: 15%;
-	margin-right: 15%;
-	margin-top: 0%;
-	border-left: 1px solid black;
-	border-right: 1px solid black;
-	border-bottom: 1px solid black;
-	border-radius: 5px;
 
-}
 h1 {
 	font-family: "Helvetica", Verdana, sans-serif; 
 	font-size: 2em;
@@ -51,16 +41,19 @@ h1 {
 	text-align: center;
 	background-color:#337ab7;
 }
+
 .tabs {
 	margin: 0;
 	padding: 0;
 }
+
 .tabs li {
 	float: left;
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
+
 .tabs a {
 	display: block;
 	text-decoration: none;
@@ -72,12 +65,14 @@ h1 {
 	border-top-right-radius: 0.5em;
 	border-top-left-radius: 0.5em;
 }
+
 .tabs .fore {
 	background-color: blue;
 	position: relative;
 	border-bottom: 1px solid blue;
 	color: white;
 }
+
 .panels {
 	clear: both;
 	width: 50%;
@@ -85,9 +80,11 @@ h1 {
 	margin-bottom: 25px;
 	padding: 10px;
 }
+
 .panel p {
 	color: black;
 }
+
 .rectangle{
 	visibility: visible;
 	height: 42px;
@@ -98,5 +95,10 @@ h1 {
 	-ms-transform-origin: 21px 21px;
 	-o-transform-origin: 21px 21px;
 	transform-origin: 21px 21px;
-
 }
+
+ footer {
+	 height: 60px;
+	 line-height: 60px;
+	 text-align: center;
+ }

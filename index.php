@@ -5,148 +5,177 @@
 
 ?>
 
-<form action="getInfo.php" method="GET" target="_blank">
-    <div class="container-fluid">
+<div class="container">
 
-        <div class="jumbotron" id="jumbos"></div>
-        <div class="panel">
-            <div class="panel-group">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div align="center"><h2>Please enter your Word Find puzzle details</h2></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-body">
+    <div class="card mt-4">
+        <div class="card-header">Popular Categories</div>
+    </div>
 
-                        <div class="row">
-                            <div class="form-group">
-                                <div class="col-sm-3">
-                                    <label for="language">Select Language</label>
-                                    <select class="form-control" id="language" name="language" onchange="fctCheck(this.value);">
-                                        <option value="English">English</option>
-                                        <option value="Telugu" selected="selected">Telugu (Default)</option>
-                                        <option value="Hindi">Hindi</option>
-                                        <option value="Gujarati">Gujarati</option>
-                                        <option value="Malayalam">Malayalam</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                                <div class="form-group">
-                                    <div class="col-sm-3">
-                                        <label for="height">Enter Height</label>
-                                        <input type="number" class="form-control" id="height" min="10" max="50" name="height" value="10" placeholder="10">
-                                    </div>
-
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-sm-3">
-                                        <label for="width">Enter Width</label>
-                                        <input type="number" class="form-control" id="width" min="10" max="50" name="width" value="10" placeholder="10">
-                                    </div>
-                                </div>
-                            <div class="form-group">
-                                <div class="col-sm-3">
-                                    <label for="sharechars">Share Characters?</label>
-                                    <select class="form-control" id="sharechars" name="sharechars">
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="row">
-
-                            <div class="form-group">
-                                <div class="col-sm-3">
-                                    <label for="word-direction">Direction of Words in Puzzle</label>
-                                    <select class="form-control" id="word-direction" name="word-direction">
-                                        <option value="all">All Directions</option>
-                                        <option value="horizontal">Horizontal</option>
-                                        <option value="vertical">Vertical</option>
-                                        <option value="diagonal">Diagonal</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-3">
-                                    <label for="title">Enter Puzzle Name</label>
-                                    <input type="text" class="form-control" id="title" name="puzzlename" placeholder="Title" value="">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-lg-3">
-                                    <label for="puzzlewords">Enter Word Bank</label>
-                                    <label for="puzzleWords"></label>
-                                    <textarea class="form-control" rows="20" id="puzzleWords" name="puzzlewords" ></textarea>
-
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-3">
-                                    <label for="fillerTypes">Filler Character Types</label>
-
-					<select class="form-control" id="Hindi" name="fillerTypes" style="display:none">
-                        <option value="Any" selected="selected">Any</option>
-                        <option value="Consonants">Consonants</option>
-                        <option value="Vowels">Vowels</option>
-                        <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                        <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                        <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                        <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                    </select>
-
-					<select class="form-control" id="Gujarati" name="fillerTypes" style="display:none">
-                        <option value="Any" selected="selected">Any</option>
-                        <option value="Consonants">Consonants</option>
-                        <option value="Vowels">Vowels</option>
-                        <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                        <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                        <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                        <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                </select>
-
-					<select class="form-control" id="Malayalam" name="fillerTypes" style="display:none">
-                            <option value="Any" selected="selected">Any</option>
-                            <option value="Consonants">Consonants</option>
-                            <option value="Vowels">Vowels</option>
-                            <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                            <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                            <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                            <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                    </select>
-
-					<select class="form-control" id="English" name="fillerTypes" style="display:none">
-						<option value="Any" selected="selected">Any</option>
-						<option value="Consonants">Consonants</option>
-						<option value="Vowels">Vowels</option>
-					</select>
-					<select class="form-control" id="Telugu" name="fillerTypes">
-                            <option value="Any" selected="selected">Any</option>
-                            <option value="Consonants">Consonants</option>
-                            <option value="Vowels">Vowels</option>
-                            <option value="SCB">SINGLE CONSONANT BLENDS</option>
-                            <option value="DCB">DOUBLE CONSONANT BLENDS</option>
-                            <option value="TCB">TRIPLE CONSONANT BLENDS</option>
-                            <option value="CDV">CONSONANT BLENDS AND VOWELS</option>
-                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+    <!-- Row 1 -->
+    <div class="row mt-4">
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">NBA Teams</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Timberwolves</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Bulls</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Warriors</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Bucks</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Heat</a></p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12"><input type="submit" name="submit" class="btn btn-primary btn-lg" value="Generate"></div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">NFL Teams</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Vikings</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Packers</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Bears</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Dolphins</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Cowboys</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">MLB Teams</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Twins</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Cubs</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Blue Jays</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">White Sox</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Giants</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">NHL Teams</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Oilers</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Maple Leafs</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Stars</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Rangers</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Wild</a></p>
+                </div>
             </div>
         </div>
     </div>
-</form>
+
+    <!-- Row 2 -->
+    <div class="row mt-4">
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">Television Shows</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Star Trek</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">The Unit</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">SG1</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Stargate Atlantis</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Batman Beyond</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">Sitcoms</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Friends</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Frasier</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Two and a Half Men</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">The Bing Bang Theory</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">How I met Your Mother</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">Movies</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">John Wick</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">The Matrix</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Star Wars</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Harry Potter</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Universal Soldier</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+            <h5 class="card-header"><a href="category.php" class="card-link">Animals</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Dogs</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Most Common Pets</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Safari Animals</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Farm Animals</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Extinct</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="row mt-4">
+        <div class="col-sm-3">
+            <div class="card">
+            <h5 class="card-header"><a href="category.php" class="card-link">Music</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">NF Songs</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Blink 182</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Famous Bands</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Musical Terms</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">MGK songs</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">Disney</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Mandalorian</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Disney Villians</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Disney Princesses</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Animated Movies</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Duck Tales</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">Science</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Human Bones</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Algebra</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Metals</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Gases</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Igneous Rock</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <h5 class="card-header"><a href="category.php" class="card-link">Food and Drink</a></h5>
+                <div class="card-body">
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Pizza Toppings</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Fast Food</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Fruits</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Vegetables</a></p>
+                    <p class="card-text"><a href="puzzle.php" class="card-link">Herbs & Spices</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <?php include('inc/footer.php'); ?>
