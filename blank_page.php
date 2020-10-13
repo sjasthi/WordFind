@@ -1,11 +1,10 @@
 <?php 
 
-    $page_title = '';
-    include('inc/header.php');
+    $page_title = 'Word Find';
+    $subtitle = 'Search';
+    include 'inc/header.php';
 
 ?>
-
-<div class="container">
 
 </div>
 
