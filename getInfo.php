@@ -2,7 +2,7 @@
     $page_title = 'Word Puzzle Maker';
     include_once('helpers/functions.php');
     session_start();
-    include('inc/header.php');
+    include 'inc/header.php';
 ?>
 
 <script src="js/solutionRectangles.js"></script>

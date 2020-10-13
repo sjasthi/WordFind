@@ -1,9 +1,12 @@
+<?php require_once 'db.php'; ?>
+<?php require_once 'indic-wp/word_processor.php'; ?>
+
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 <head>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="img/favico.ico">
+    <link rel="icon" href="images/favico.ico">
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -24,19 +27,30 @@
         <a href="index.php"><header class="jumbotron jumbotron-fluid"></header></a>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
         <div class="container">
+            <a class="navbar-brand" href="index.php"><img src="images/logo.png" alt="logo"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link" href="index.php">Home</a>
-                    <a class="nav-item nav-link active" href="createPuzzle.php">Create Puzzle <span class="sr-only">(current)</span></a>
+                    <a class="nav-item nav-link<?php echo ($page_title == 'Word Find') ? ' active' : '' ; ?>" href="index.php">Home</a>
+                    <a class="nav-item nav-link<?php echo ($page_title == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>" href="create_puzzle.php">Create Puzzle</a>
+                    <!-- <a class="nav-item nav-link<?php // echo ($page_title == 'Admin') ? ' active' : '' ; ?>" href="admin.php">Admin</a> -->
+                    
                 </div>
+
+                <form class="form-inline" action="search.php" method="post">
+                    <input class="form-control mr-sm-2" type="search" placeholder="category, title, author, date created" onfocus="this.placeholder = ''" onblur="this.placeholder = 'category, title, author, date created'" size="33" aria-label="Search">
+                    <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+                </form>
             </div>
+            
         </div>
     </nav>
 
     <main class="flex-fill pb-3 bg-light">
+
+        <div class="container">
