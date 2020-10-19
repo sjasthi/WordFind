@@ -5,6 +5,7 @@
 
     $puzzleId = $_GET['puzzleId'];
     $puzzle = getPuzzleById($puzzleId, $pdo);
+    addFoils($puzzle);
 
     foreach($puzzle as $puzzle){
 
@@ -58,17 +59,8 @@
             <div id="collapseTwo" class="collapse show" aria-labelledby="puzzle">
                 
                 <div class="card-body ml-3">
-                    <table align="center" border>
-                        <?php for($row = 0; $row < $data['puzzle']->height; $row++): ?>
-                            
-                            <tr>
-                                <?php for($col = 0; $col < $data['puzzle']->width; $col++): ?>
-                                <td>
-                                    .
-                                </td>
-                                <?php endfor; ?>
-                            </tr>
-                            <?php endfor; ?>
+                    <table align = "center">
+                        <!-- this is where we put the table -->
 
 
                     </table>
