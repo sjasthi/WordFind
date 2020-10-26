@@ -1,93 +1,129 @@
 <?php 
-
     $page_title = 'Word Find Puzzle Maker';
-    $subtitle = 'Puzzle Configurations';
     include 'includes/header.php';
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        createPuzzle($pdo);
+    }
 ?>
 
 <div class="card mt-4">
-    <h5 class="card-header"><?php echo $subtitle; ?></h5>
+    <h5 class="card-header">Puzzle Configurations <small><small class="text-danger"><?php echo (isset($_SESSION['error'])) ? $_SESSION['error'] : ''; ?></small></small></h5>
 </div>
 
-    <form action="generate_puzzle.php" method="post">
+    <form action="create_puzzle.php" method="post">
         <div class="row mt-4">
             <div class="col-md-8">
                 <div class="form-row">
                     
                     <div class="form-group col-md-6">
                         <label for="category">Category</label>
-                        <input type="text" name="category" id="category" class="form-control">
+                        <input type="text" name="category" id="category" class="form-control" value="<?php echo (isset($_SESSION['cat_name'])) ? $_SESSION['cat_name'] : '' ?>">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="title">Title</label>
-                        <input type="text" name="title" id="title" class="form-control">
+                        <input type="text" name="title" id="title" class="form-control" value="<?php echo (isset($_SESSION['title'])) ? $_SESSION['title'] : '' ?>">
                     </div>
 
                     <div class="form-group col-md-12">
                         <label for="description">Description</label>
-                        <input type="text" name="description" id="description" class="form-control">
-                    </div>
-
-                    <div class="form-group col-md-6">
-                        <label for="author">Author</label>
-                        <input type="text" name="author" id="author" class="form-control">
-                    </div>
-
-                    <div class="form-group col-md-6">
-                        <label for="createdOn">Create On</label>
-                        <input type="date" name="created_on" id="createdOn" value="<?= date('Y-m-d', time()); ?>" class="form-control">
+                        <input type="text" name="description" id="description" class="form-control" value="<?php echo (isset($_SESSION['description'])) ? $_SESSION['description'] : '' ?>">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="language">Language</label>
                         <select name="language" id="language" class="form-control">
-                            <option value="English" selected="selected">English</option>
-                            <option value="Telugu">Telugu (Default)</option>
-                            <option value="Hindi">Hindi</option>
-                            <option value="Gujarati">Gujarati</option>
-                            <option value="Malayalam">Malayalam</option>
+
+                        <?php
+                        
+                            $options = [
+                                'english'   => 'English',
+                                'telugu'    => 'Telugu',
+                                'hindi'     => 'Hindi',
+                                'gujarati'  => 'Gujarati',
+                                'malayalam' => 'Malayalam'
+                            ];
+                            foreach($options as $key => $option):
+                        
+                        ?>
+
+                        <option value="<?php echo $key; ?>" <?php echo isset($_SESSION['language']) && $_SESSION['language'] == $option ? 'selected ="selected"' : '' ?>><?php echo $option; ?></option>
+
+                        <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="wordDirection">Word Direction</label>
                         <select name="word_direction" id="wordDirection" class="form-control">
-                            <option value="all">All Directions</option>
-                            <option value="horizontal">Horizontal</option>
-                            <option value="vertical">Vertical</option>
-                            <option value="diagonal">Diagonal</option>
+
+                        <?php
+                            $options = [
+                                'all'        => 'All Directions',
+                                'horizontal' => 'Horizontal',
+                                'vertical'   => 'Vertical',
+                                'diagonal'   => 'Diagonal'
+                            ];
+
+                            foreach($options as $key => $option):
+                        ?>
+
+                            <option value="<?php echo $key; ?>" <?php echo isset($_SESSION['word_direction']) && $_SESSION['word_direction'] == $option ? 'selected ="selected"' : '' ?>><?php echo $option; ?></option>
+
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="height">Height</label>
-                        <input type="number" name="height" id="height" value="10" class="form-control">
+                        <input type="number" name="height" id="height" value="<?php echo (isset($_SESSION['height'])) ? $_SESSION['height'] : '2' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="width">Width</label>
-                        <input type="number" name="width" id="width" value="10" class="form-control">
+                        <input type="number" name="width" id="width" value="<?php echo (isset($_SESSION['width'])) ? $_SESSION['width'] : '2' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="sharechars">Share Characters</label>
                         <select name="share_chars" id="sharechars" class="form-control">
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
+                        <?php
+                            $options = [
+                                'yes' => 'Yes',
+                                'no'  => 'No'
+                            ];
+
+                            foreach($options as $key => $option):
+                        ?>
+
+                            <option value="<?php echo $key; ?>" <?php echo isset($_SESSION['share_chars']) && $_SESSION['share_chars'] == $option ? 'selected ="selected"' : '' ?>><?php echo $option; ?></option>
+
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="fillerCharTypes">Filler Character Types</label>
                         <select name="filler_char_types" id="fillerCharTypes" class="form-control">
-                            <option value="Any" selected="selected">Any</option>
-                            <option value="Consonants">Consonants</option>
-                            <option value="Vowels">Vowels</option>
-                            <option value="SCB">Single Consonant Blends</option>
-                            <option value="DCB">Double Consonant Blends</option>
-                            <option value="TCB">Triple Consonant Blends</option>
-                            <option value="CDV">Constant Belnds and Vowels</option>
+
+                        <?php
+                            $options = [
+                                'any'         => 'Any',
+                                'constonants' => 'Constants',
+                                'vowels'      => 'Vowels',
+                                'SCB'         => 'Single Consonant Blends',
+                                'DCB'         => 'Double Consonant Blends',
+                                'TCB'         => 'Triple Consonant Blends',
+                                'CDV'         => 'Consonant Blends and Vowels'
+                            ];
+
+                            foreach($options as $key => $option):
+                        ?>
+
+                            <option value="<?php echo $key; ?>" <?php echo isset($_SESSION['filler_char_types']) && $_SESSION['filler_char_types'] == $option ? 'selected ="selected"' : '' ?>><?php echo $option; ?></option>
+
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -96,7 +132,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="wordBank">Word Bank</label>
-                    <textarea class="form-control" rows="19" name="word_bank" id="wordBank"></textarea>
+                    <textarea class="form-control" rows="15" name="word_bank" id="wordBank"><?php echo (isset($_SESSION['word_bank'])) ? $_SESSION['word_bank'] : '' ?></textarea>
                 </div>
             </div>
         </div>

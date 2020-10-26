@@ -2,7 +2,7 @@
 
     <footer class="bg-dark">
        <div class="container text-white">
-            silc | Word Find <?php echo date('Y');  ?>
+            silc | Word Find &#169; <?php echo date('Y');  ?>
        </div>
     </footer>
 
