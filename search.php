@@ -31,7 +31,5 @@
             <br>Created on October 03, 2020</p>
         </div>
     </div>
-    
-</div>
 
 <?php include('includes/footer.php'); ?>

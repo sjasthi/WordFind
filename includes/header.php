@@ -1,14 +1,7 @@
 <?php
-
-    session_start();
     require_once 'db.php';
     require_once 'helpers/functions.php';
     require_once 'indic-wp/word_processor.php';
-
-    if($page_title != 'Word Find Puzzle Maker'){
-        session_destroy();
-    }
-
 ?>
 
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
@@ -30,8 +23,8 @@
     <meta name="viewport" content="width=device-width, initial-scale = 1">
     <title><?php echo $page_title; ?></title>
 </head>
-
-<body class="d-flex flex-column">
+<script src="js/circle_solutions.js"></script>
+<body class="d-flex flex-column" resize="updateCSS()">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="index.php"><img src="images/logo.png" alt="logo"></a>
