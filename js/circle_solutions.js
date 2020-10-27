@@ -1,3 +1,4 @@
+
 var rectangles = [];
     // Browser configs
     var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0; var isFirefox = typeof InstallTrigger !== 'undefined';

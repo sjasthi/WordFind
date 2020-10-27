@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 //require("telugu_parser.php");
 
 /*

@@ -6,6 +6,10 @@
     $puzzleId = $_GET['puzzleId'];
     $puzzle = getPuzzleById($puzzleId, $pdo);
 
+    echo '<pre>';
+    print_r($puzzle);
+    echo '</pre>';
+
     foreach($puzzle as $puzzle){
 
         $data = [
@@ -33,6 +37,10 @@
             <p class="card-text"><?php
             
                 $wordBank = unserialize($data['puzzle']->word_bank);
+
+                echo '<pre>';
+                print_r($wordBank);
+                echo '</pre>';
 
                 $count = 0;
                 foreach($wordBank as $word){
@@ -223,6 +231,5 @@
             </div>
         </div>
     </div>
-</div>
 
 <?php include('includes/footer.php'); ?>

@@ -1,15 +1,14 @@
-// index.php
-// wtf does this do??
-function fctCheck(language) {
-    var elems = document.getElementsByName("fillerTypes");
+// Change Filler Character Types Dropdown on Language Dropdown Event Change
+var selectLanguage = document.getElementById("language");
+selectLanguage.addEventListener('change', changeLanguage);
+
+function changeLanguage(e){
+    var elems = document.getElementsByName("filler_char_types");
     for (var i = 0; i < elems.length; i++) {
         elems.item(i).style.display = "none";
-    }
-    document.getElementById(language).style.display = "block";
-}
 
-// only used in index.backup
-// not used??
-function changeTest(obj){
-    alert(obj.options[obj.selectedIndex].value);
+        // disable select
+        elems.item(i).disabled = false;
+    }
+    document.getElementById(e.target.value).style.display = "block";
 }

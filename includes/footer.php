@@ -1,3 +1,5 @@
+    
+        </div> <!-- end container -->
     </main>
 
     <footer class="bg-dark">
@@ -5,8 +7,6 @@
             silc | Word Find &#169; <?php echo date('Y');  ?>
        </div>
     </footer>
-
-</body>
 
 <script src="js/main.js"></script>
 
