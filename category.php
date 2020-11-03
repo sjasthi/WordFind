@@ -1,6 +1,6 @@
 <?php 
 
-    $page_title = 'Word Find Category';
+    $pageTitle = 'Word Find Category';
     include 'includes/header.php';
 
     $categoryId = $_GET['categoryId'];

@@ -1,6 +1,6 @@
 <?php 
 
-    $page_title = 'Word Find';
+    $pageTitle = 'Word Find';
     include 'includes/header.php';
 
     $categories = getCategoriesWithTopNResults($pdo);
