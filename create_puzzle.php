@@ -1,18 +1,25 @@
 <?php 
-    $page_title = 'Word Find Puzzle Maker';
+    $pageTitle = 'Word Find Puzzle Maker';
     include 'includes/header.php';
 
-    if(isset($_POST['generate_puzzle'])){
+    // display puzzle to user
+    if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $puzzle = generatePuzzle();
+        $_SESSION['data'] = $puzzle;
+
+        $letters = setControlCookies($_SESSION['data']);
     }
-    
+    // save generated puzzle to db
+    if(isset($_POST['save_puzzle'])){
+        savePuzzle($pdo, $_SESSION['data']);
+    }
 ?>
 
 <div class="card mt-4">
     <h5 class="card-header">Puzzle Configurations<small><small class="text-danger"><?php echo isset($puzzle['error']) ? $puzzle['error'] : ''; ?></small></small></h5>
 </div>
 
-    <form action="create_puzzle.php" method="post">
+    <form action="" method="post">
         <div class="row mt-4">
             <div class="col-md-8">
                 <div class="form-row">
@@ -71,12 +78,12 @@
 
                     <div class="form-group col-md-6">
                         <label for="height">Height</label>
-                        <input type="number" name="height" id="height" min="10" max="25" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '10' ?>" class="form-control">
+                        <input type="number" name="height" id="height" min="5" max="26" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '10' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="width">Width</label>
-                        <input type="number" name="width" id="width" min="10" max="25" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '10' ?>" class="form-control">
+                        <input type="number" name="width" id="width" min="5" max="26" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '10' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
@@ -154,7 +161,7 @@
             <div class="col-md-8">
                 <div class="form-row">
 
-    <?php if(isset($_POST['generate_puzzle']) && $puzzle['generate_board'] == TRUE): ?>
+    <?php if($_SERVER['REQUEST_METHOD'] == 'POST'): ?>
                     <div class="form-group col-md-6">
                         <button class="btn btn-primary form-control" type="submit" name="generate_puzzle">Generate Puzzle</button>
                     </div>
@@ -165,39 +172,47 @@
                 </div> <!-- end form-row -->
             </div> <!-- end col -->
         </div> <!-- end row -->
-    </form>
-
-    <div class="card">
-        <h6 class="card-header">Generated Puzzle</h6>
-        <div class="card-body">
-            <table align="center">
-                <?php for($row = 0; $row < $puzzle['height']; $row++): ?>
-                    <tr>
-                        <?php for($col = 0; $col < $puzzle['width']; $col++): ?>
-                        <td>
-                            <?php echo $puzzle['board'][$row][$col]; ?>  
-                        </td>
-                        <?php endfor; // end col ?>
-                    </tr>
-                    <?php endfor; // end row ?>
-            </table>
-        </div>
-    </div>
 
     <div class="card mt-4">
-        <h6 class="card-header">Generated Solution Puzzle</h6>
-        <div class="card-body">
-            <table align="center">
-                <?php for($row = 0; $row < $puzzle['height']; $row++): ?>
+        <div class="card-header mt-1"><h6 class="custom-control-inline"> Generated Puzzle</h6>
+                <div class="custom-control custom-switch custom-control-inline">
+                    <input type="hidden" name="toggle_borders" value="0">
+                    <input type="checkbox" class="controls custom-control-input" name="toggle_borders" id="toggleBorders" value="1" checked>
+                    <label class="custom-control-label" for="toggleBorders">borders</label>
+                </div>
+
+                <div class="custom-control custom-switch custom-control-inline">
+                    <input type="hidden" name="toggle_labels" value="0">
+                    <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1" checked>
+                    <label class="custom-control-label" for="toggleLabels">Label Columns and Rows</label>
+                </div>
+
+                <div class="custom-control custom-switch custom-control-inline">
+                    <input type="hidden" name="toggle_answers" value="0">
+                    <input type="checkbox" class="custom-control-input" name="toggle_answers" id="toggleAnswers" value="1" checked>
+                    <label class="custom-control-label" for="toggleAnswers">Show Answers</label>
+                </div>
+        </div>
+
+        <div class="card-body d-flex justify-content-center">
+            <table>
+                <tr>
+                    <?php foreach($letters as $letter): ?>
+                        <td class="rowLabel bg-success d-none"><?php echo $letter ?></td>
+                    <?php endforeach; ?>
+                </tr>
+                
+                <?php for($row = 0; $row < $_SESSION['data']['height']; $row++): ?>
                     <tr>
-                        <?php for($col = 0; $col < $puzzle['width']; $col++): ?>
+                        <td class="rowLabel bg-success d-none"><?php echo $row + 1; ?></td>
+                        <?php for($col = 0; $col < $_SESSION['data']['width']; $col++): ?>
                         
                             <?php
                             
                             $answerLetter = FALSE;
-                            for($i = 0; $i < sizeof($puzzle['answer_coordinates']); $i++){
-                                for($j = 0; $j < sizeof($puzzle['answer_coordinates'][$i]); $j++){
-                                    $index = $puzzle['answer_coordinates'][$i][$j];
+                            for($i = 0; $i < sizeof($_SESSION['data']['answer_coordinates']); $i++){
+                                for($j = 0; $j < sizeof($_SESSION['data']['answer_coordinates'][$i]); $j++){
+                                    $index = $_SESSION['data']['answer_coordinates'][$i][$j];
                                     if($index[0] == $row && $index[1] == $col){
                                         $answerLetter = TRUE;
                                     }
@@ -208,16 +223,13 @@
                             
                             ?>
 
-                                <td class="bg-success" id="<?php echo $row . $col; ?>"><?php echo $puzzle['board'][$row][$col]; ?></td>
+                                <td id="<?php echo $row . $col; ?>"><?php echo $_SESSION['data']['board'][$row][$col]; ?></td>
 
-                            <?php else: ?>
+                            <?php else: // answerLetter ?>
 
-                                <td id="<?php echo $row . $col; ?>"><?php echo $puzzle['board'][$row][$col]; ?></td>
+                                <td id="<?php echo $row . $col; ?>"><?php echo $_SESSION['data']['board'][$row][$col]; ?></td>
 
-                            <?php endif; ?>
-
-
-                       
+                            <?php endif; // answerLetter ?>
                         <?php endfor;  // end col ?>
                     </tr>
                     <?php endfor; // end row ?>
@@ -225,7 +237,7 @@
         </div>
     </div>
 
-    <?php else: ?>
+    <?php else: // puzzle generated ?>
                     <div class="form-group col-md-12">
                         <button class="btn btn-primary form-control" type="submit" name="generate_puzzle">Generate Puzzle</button>
                     </div>
@@ -234,6 +246,12 @@
         </div> <!-- end row -->
     </form>
 
-    <?php endif; ?>
+    <?php
+        endif; // $_SERVER['REQUEST_METHOD'] == 'POST'
+        
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            addSolution($_SESSION['data']);
+        }
 
-<?php include('includes/footer.php'); ?>
+        include('includes/footer.php');
+    ?>

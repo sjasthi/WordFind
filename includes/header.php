@@ -2,6 +2,7 @@
     require_once 'db.php';
     require_once 'helpers/functions.php';
     require_once 'indic-wp/word_processor.php';
+    session_start();
 ?>
 
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
@@ -21,10 +22,10 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale = 1">
-    <title><?php echo $page_title; ?></title>
+    <title><?php echo $pageTitle; ?></title>
 </head>
 <script src="js/circle_solutions.js"></script>
-<body class="d-flex flex-column" resize="updateCSS()">
+<body class="d-flex flex-column">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="index.php"><img src="images/logo.png" alt="logo"></a>
@@ -34,9 +35,9 @@
 
             <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link<?php echo ($page_title == 'Word Find') ? ' active' : '' ; ?>" href="index.php">Home</a>
-                    <a class="nav-item nav-link<?php echo ($page_title == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>" href="create_puzzle.php">Create Puzzle</a>
-                    <a class="nav-item nav-link<?php echo ($page_title == 'login') ? ' active' : '' ; ?>" href="login.php">Login</a>
+                    <a class="nav-item nav-link<?php echo ($pageTitle == 'Word Find') ? ' active' : '' ; ?>" href="index.php">Home</a>
+                    <a class="nav-item nav-link<?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>" href="create_puzzle.php">Create Puzzle</a>
+                    <a class="nav-item nav-link<?php echo ($pageTitle == 'login') ? ' active' : '' ; ?>" href="login.php">Login</a>
                 </div>
 
                 <form class="form-inline" action="search.php" method="post">

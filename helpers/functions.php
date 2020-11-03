@@ -1,10 +1,10 @@
 <?php
 
-    function getPuzzleById($puzzleId, $pdo){
+    function getPuzzleById($pdo, $puzzleId){
         $sql = 'SELECT * from puzzles WHERE puzzle_id = :puzzle_id';
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['puzzle_id' => $puzzleId]);
-        return $puzzles = $stmt->fetchAll();
+        return $stmt->fetchAll();
     }
 
     function getCategoriesWithTopNResults($pdo){
@@ -18,7 +18,7 @@
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        return $categories = $stmt->fetchAll();
+        return $stmt->fetchAll();
     }
 
     function getCategoryById($categoryId, $pdo){
@@ -34,27 +34,34 @@
             
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['category_id' => $categoryId]);
-        return $category = $stmt->fetchAll();
+        return $stmt->fetchAll();
     }
 
+    function setControlCookies($data){
+        $alphabet = range('A', 'Z');
+        $letters = array_slice($alphabet, 0, $data['width']);
+        // add 0 to corner of table
+        array_unshift($letters, 0);
+        
+        $expire = time() + (86400 * 7); // 7 days
 
+        if(isset($_POST['toggle_borders'])){
+            setcookie('borders', $_POST['toggle_borders'], $expire);
+            $_COOKIE['borders'] = $_POST['toggle_borders'];
+        }
 
+        if(isset($_POST['toggle_labels'])){
+            setcookie('labels', $_POST['toggle_labels'], $expire);
+            $_COOKIE['labels'] = $_POST['toggle_labels'];
+        }
 
+        if(isset($_POST['toggle_answers'])){
+            setcookie('answers', $_POST['toggle_answers'], $expire);
+            $_COOKIE['answers'] = $_POST['toggle_answers'];
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return $letters;
+    }
 
     function generatePuzzle(){
         
@@ -94,25 +101,31 @@
             }
         }
 
+        unset($data['word_bank']);
+        $data['word_bank'] = [];
+
         $charBank = [];
         foreach($rawWordBank as $word){
+            array_push($data['word_bank'], $word);
             $wordProcessor = new wordProcessor($word);
 
             // get logical chars of word
             $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
 
             // check grid dimensions are not too small for logChars
-            if(sizeof($logChars) > $data['height'] && sizeof($logChars) > $data['width']){
-                $data['error'] = 'At least one of the words in your word bank is too large for the specified dimensions. Please adjust grid dimensions.';
-                $data['generate_board'] = FALSE;
-            } else {
+            // if(sizeof($logChars) > $data['height'] && sizeof($logChars) > $data['width']){
+            //     $data['error'] = 'At least one of the words in your word bank is too large for the specified dimensions. Please adjust grid dimensions.';
+            //     $data['generate_board'] = FALSE;
+            // } else {
+
+
                 foreach($logChars as $singleChar){
                     if($singleChar === " "){
                         $singleChar = "";
                     }
                 }
                 array_push($charBank, $logChars);
-            }
+            // }
         } // end foreach
 
         // push to data
@@ -135,8 +148,6 @@
             $data['board'] = $board;
             $data['solution_directions'] = $solutionDirections;
             $data['answer_coordinates'] = $answerCoords;
-
-            addSolution($data);
         }
         return $data;
     }
@@ -151,6 +162,8 @@
         }
     }
 
+    // THIS IS WHAT IS BROKEN - i think??
+    // ONLY HAPPENS WITH 2 OR MORE WORDS
     function fillBoard($data){
         global $solutionDirections, $coords, $answerCoords;
         $solutionDirections = array();
@@ -168,21 +181,20 @@
                 while($keepGoing){
                     $dir = rand(0, 7);
                     $result = addWord($data['char_bank'][$counter], $allDirections[$dir], $data);
-                    if($result == FALSE){
-                        $keepGoing == FALSE;
-                        $itWorked == FALSE;
+                    if ($result == FALSE){
+                        $keepGoing = FALSE;
+                        $itWorked = FALSE;
                         $answerCoordinates = array();
                         $solutionDirections = array();
-                        break;
                     }
                     $counter++;
                     array_push($solutionDirections, $allDirections[$dir]);
-                    if($counter >= count($data['char_bank'])){
+                    if ($counter >= count($data['char_bank'])){
                         $keepGoing = FALSE;
                     }
                     array_push($answerCoords, $coords);
                 }
-            break;
+            break;   
 
             case "horizontal":
                 while($keepGoing){
@@ -200,7 +212,7 @@
                         $keepGoing = FALSE;
                     }
                     array_push($answerCoords, $coords);
-                } // end while
+                }
             break;           
 
             case "vertical":
@@ -390,7 +402,7 @@
                         } else{
                             $itWorked = FALSE;
                         }
-                    }else{
+                    } else {
                         if(($boardLetter == ".")){
                             $board[$newRow-$i][$newCol - $i] = $wordLetter;
                         } else {
@@ -945,19 +957,15 @@
 
     function addSolution($data){
         $counter = 0;
-    
         foreach($data['answer_coordinates'] as $wordCoord){
-                $id = "sol" . $counter;
-        
-            if($wordCoord == null){
-                continue;
-            }
-
-            $begCoord = "".$wordCoord[0][0] ."".$wordCoord[0][1]."";
-            $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1]);
+            $begCoord = "".$wordCoord[0][0] . "". $wordCoord[0][1] . "";
 
             $direction = getDirection($data['solution_directions'][$counter]);
-            addRectangle($id, $begCoord, $direction, $length);
+            $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1]);
+            // $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1], $direction);
+
+            circleAnswers($begCoord, $direction, $length);
+
             $counter++;
         }
     }
@@ -984,6 +992,141 @@
         return $adjustedLength;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // function getSolutionLength($beginRow, $beginCol, $endRow, $endCol, $direction){
+
+    //     $tdWidth = 49.7;
+    //     // // echo $beginCol;
+    //     // // echo $endCol;
+    //     echo $direction;
+
+    //     // echo $length = ($beginCol-$endCol + 1) * $tdWidth;
+
+        
+
+    //     // case "N":
+    //     //     $retVal = 4;
+    //     //     break;
+    //     // case "E":
+    //     //     $retVal = 1;
+    //     //     break;
+    //     // case "S":
+    //     //     $retVal = 3;
+    //     //     break;
+    //     // case "W":
+    //     //     $retVal = 2;
+    //     //     break;
+    //     // case "NW":
+    //     //     $retVal = 6;
+    //     //     break;
+    //     // case "NE":
+    //     //     $retVal = 8;
+    //     //     break;
+    //     // case "SE":
+    //     //     $retVal = 5;
+    //     //     break;
+    //     // case "SW":
+    //     //     $retVal = 7;
+
+    //     if($direction == 1 || $direction == 2){
+    //         $length = ($beginCol-$endCol + 1) * $tdWidth;
+    //     }
+        
+    //     // if($direction == 3 || 4){
+    //     //     $length = ($beginRow-$endRow + 1) * $tdWidth;
+    //     // }
+
+
+
+    //     return $length;
+
+    //     // $adjustedLength = 0;
+    //     // $oneChar = 0.5;
+    //     // $multiplier = 55;
+    //     // $lengthIncreaser = 1.4;
+    //     // $lengthFactor = 0.35;
+
+
+    //     // $adjustedLength = 0;
+    //     // $oneChar = .5;
+    //     // $multiplier = 55;
+    //     // $lengthIncreaser = 1.4;
+    //     // $lengthFactor = 0.35;
+
+    //     // $length = sqrt(pow($endRow - $beginRow, 2) + pow($endCol - $beginCol, 2));
+    
+    //     // if($beginRow == $endRow && $beginCol == $endCol){
+    //     //     $length = $oneChar;
+    //     // }
+
+    //     // if($length > $oneChar && $length < 5){
+    //     //     $adjustedLength = round($length * ($multiplier * ((($lengthIncreaser / $length) * $lengthFactor) + 1)));
+    //     // } else {
+    //     //     $adjustedLength = round($length * $multiplier);
+    //     // }
+    //     // return $adjustedLength;
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     function getDirection($direction){
         $retVal = 0;
         switch($direction){
@@ -1009,23 +1152,19 @@
                 $retVal = 5;
                 break;
             case "SW":
-                $retVal =7;
+                $retVal = 7;
         }
         return $retVal;
     }
 
-    function addRectangle($rectID, $beginCoord, $direction, $length){
-
-        echo "<div class='rectangle' id='" . $rectID . "'></div>";
-        echo "<script type='text/javascript' >changeCSS('" . $rectID ."', '". $beginCoord ."', ". $direction .", ". $length .");";
-        echo "var rect = ['" . $rectID ."', '" . $beginCoord ."', " . $direction .", " . $length . "];";
-        echo "console.log(rect);";
-        echo "rectangles.push(rect);</script>";
-    
+    function circleAnswers($beginCoord, $direction, $length){
+        echo "<script type='text/javascript'>";
+        echo "circleAnswers('" . $beginCoord ."', ". $direction .", ". $length .");";
+        echo "</script>";
     }
 
     // save generated puzzle to db
-    function savePuzzle($pdo, $data, $wordBank){
+    function savePuzzle($pdo, $data){
         $sql = 'INSERT INTO categories(cat_name)
         SELECT * FROM (SELECT :cat_name) AS temp
         WHERE NOT EXISTS (SELECT cat_name FROM categories WHERE cat_name = :cat_name);
@@ -1034,8 +1173,8 @@
                         WHEN @cat_exists THEN @cat_exists
                         ELSE LAST_INSERT_ID()
                         END;
-        INSERT INTO puzzles(cat_id, title, description, author_id, language, word_direction, height, width, share_chars, filler_char_types, word_bank)
-        VALUES (@cat_id, :title, :description, :author_id, :language, :word_direction, :height, :width, :share_chars, :filler_char_types, :word_bank);';
+        INSERT INTO puzzles(cat_id, title, description, author_id, language, word_direction, height, width, share_chars, filler_char_types, word_bank, board, solution_directions, answer_coordinates)
+        VALUES (@cat_id, :title, :description, :author_id, :language, :word_direction, :height, :width, :share_chars, :filler_char_types, :word_bank, :board, :solution_directions, :answer_coordinates);';
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['cat_name' => $data['cat_name'],
@@ -1048,6 +1187,25 @@
                            'width' => $data['width'],
                      'share_chars' => $data['share_chars'],
                'filler_char_types' => $data['filler_char_types'],
-                       'word_bank' => serialize($wordBank)]);
-        header('location:index.php');
+                       'word_bank' => json_encode($data['word_bank']),
+                           'board' => json_encode($data['board']),
+             'solution_directions' => json_encode($data['solution_directions']),
+              'answer_coordinates' => json_encode($data['answer_coordinates'])
+        ]);
+
+        unset($_SESSION['data']);
+
+        $sql = 'SELECT max(puzzle_id) AS id FROM puzzles';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $id = $stmt->fetchAll();
+
+        foreach($id as $id){
+
+            $data = [
+                'id' => $id->id
+            ];
+        }
+        
+        header("location:puzzle.php?puzzleId={$data['id']}" );
     }

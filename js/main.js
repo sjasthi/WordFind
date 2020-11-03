@@ -1,14 +1,59 @@
 // Change Filler Character Types Dropdown on Language Dropdown Event Change
-var selectLanguage = document.getElementById("language");
-selectLanguage.addEventListener('change', changeLanguage);
+$("#language").change(function(e){
+    $('[name="filler_char_types"]').hide().prop('disabled', false);
+    $('#' + e.target.value).show();
+});
 
-function changeLanguage(e){
-    var elems = document.getElementsByName("filler_char_types");
-    for (var i = 0; i < elems.length; i++) {
-        elems.item(i).style.display = "none";
+$("#controls input:checkbox").change(function(){
+    $('#controls').submit();
+});
 
-        // disable select
-        elems.item(i).disabled = false;
+// toggleBorders on table
+if($('#toggleBorders').prop('checked')){
+    $('table tr td').css('border', '#000 solid 1px');
+} else {
+    $('table tr td').css('border', '0');
+}
+
+$("#toggleBorders").click(toggleBorders);
+function toggleBorders(){
+    if($(this).prop('checked')){
+        $('table tr td').css('border', '#000 solid 1px');
+    } else {
+        $('table tr td').css('border', '0');
     }
-    document.getElementById(e.target.value).style.display = "block";
+}
+
+// toggleLabels on table
+if($('#toggleLabels').prop('checked')){
+    $('.rowLabel').removeClass('d-none');
+} else {
+    $('.rowLabel').addClass('d-none');
+}
+
+$("#toggleLabels").click(toggleLabels);
+function toggleLabels(){
+    if($(this).prop('checked')){
+        $('.rowLabel').removeClass('d-none');
+    } else {
+        $('.rowLabel').addClass('d-none');
+    }
+}
+
+// toggleAnswers on table
+if($('#toggleAnswers').prop('checked')){
+    $('.solutionX').removeClass('d-none');
+} else {
+    $('.solutionX').addClass('d-none');
+}
+
+$("#toggleAnswers").click(toggleAnswers);
+function toggleAnswers(){
+    if($(this).prop('checked')){
+        console.log('checked');
+        $('.solutionX').removeClass('d-none');
+    } else {
+        console.log('NOT checked');
+        $('.solutionX').addClass('d-none');
+    }
 }
