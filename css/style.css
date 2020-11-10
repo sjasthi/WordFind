@@ -2,28 +2,22 @@
 	min-height:100vh;
 }
 
+.col-auto {
+	overflow-x:auto;
+	overflow-y: hidden;
+}
+
 table, th, tr, td {
 	padding: 5px;
 	font-size: 30px;
 }
 
 td {
-	height: 50px;
-	width: 50px;
+	height: auto;
+	min-width: 50px;
 	padding: 0;
 	text-align: center;
-}
-
-.rectangle {
-	visibility: visible;
-	height: 50px;
-	background: none;
-	border-radius: 20px;
-	border-width: 3px !important;
-	/* -webkit-transform-origin: 21px 21px ;
-	-ms-transform-origin: 21px 21px;
-	-o-transform-origin: 21px 21px;
-	transform-origin: 21px 21px; */
+	
 }
 
  footer {
@@ -33,9 +27,8 @@ td {
  }
 
  .solutionX {
-	 /* position: absolute; */
 	 border-radius: 20px;
-	 border-width: 3px !important;
 	 top: 0;
 	 bottom: 0;
+	 border-width: 3px !important;
  }

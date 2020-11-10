@@ -3,11 +3,11 @@
     include 'includes/header.php';
 
     // display puzzle to user
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if(isset($_POST['generate_puzzle'])){
         $puzzle = generatePuzzle();
         $_SESSION['data'] = $puzzle;
 
-        $letters = setControlCookies($_SESSION['data']);
+        $letters = getTableHeader($_SESSION['data']);
     }
     // save generated puzzle to db
     if(isset($_POST['save_puzzle'])){
@@ -16,8 +16,20 @@
 ?>
 
 <div class="card mt-4">
-    <h5 class="card-header">Puzzle Configurations<small><small class="text-danger"><?php echo isset($puzzle['error']) ? $puzzle['error'] : ''; ?></small></small></h5>
+    <h5 class="card-header">Puzzle Configurations</h5>
 </div>
+
+<?php if(isset($puzzle['error'])): ?>
+
+    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+        <strong>Oops!</strong> <?php echo $puzzle['error']; ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+<?php endif; ?>
+
 
     <form action="" method="post">
         <div class="row mt-4">
@@ -78,12 +90,12 @@
 
                     <div class="form-group col-md-6">
                         <label for="height">Height</label>
-                        <input type="number" name="height" id="height" min="5" max="26" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '10' ?>" class="form-control">
+                        <input type="number" name="height" id="height" min="5" max="702" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '12' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="width">Width</label>
-                        <input type="number" name="width" id="width" min="5" max="26" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '10' ?>" class="form-control">
+                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '12' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
@@ -117,7 +129,7 @@
                                 
                                 if($language != 'English'):
 
-                                    $charTypes = ['Any', 'Constants', 'Vowels', 'Single Consonant Blends', 'Double Consonant Blends', 'Triple Consonant Blends', 'Consonant Blends and Vowels']; 
+                                    $charTypes = ['Any', 'Consonants', 'Vowels', 'Single Consonant Blends', 'Double Consonant Blends', 'Triple Consonant Blends', 'Consonant Blends and Vowels']; 
         
                                     foreach($charTypes as $type):
                                      
@@ -130,7 +142,7 @@
                                     endforeach; // end charTypes
 
                                 else:
-                                    $charTypes = ['Any', 'Constants', 'Vowels']; 
+                                    $charTypes = ['Any', 'Consonants', 'Vowels']; 
                                     
                                     foreach($charTypes as $type):
                                 
@@ -160,8 +172,7 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="form-row">
-
-    <?php if($_SERVER['REQUEST_METHOD'] == 'POST'): ?>
+    <?php if($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['data']['generate_board']): ?>
                     <div class="form-group col-md-6">
                         <button class="btn btn-primary form-control" type="submit" name="generate_puzzle">Generate Puzzle</button>
                     </div>
@@ -173,28 +184,26 @@
             </div> <!-- end col -->
         </div> <!-- end row -->
 
-    <div class="card mt-4">
-        <div class="card-header mt-1"><h6 class="custom-control-inline"> Generated Puzzle</h6>
+        <div class="card mt-4">
+            <div class="card-header mt-1">
                 <div class="custom-control custom-switch custom-control-inline">
-                    <input type="hidden" name="toggle_borders" value="0">
-                    <input type="checkbox" class="controls custom-control-input" name="toggle_borders" id="toggleBorders" value="1" checked>
+                    <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" checked>
                     <label class="custom-control-label" for="toggleBorders">borders</label>
                 </div>
 
                 <div class="custom-control custom-switch custom-control-inline">
-                    <input type="hidden" name="toggle_labels" value="0">
-                    <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1" checked>
-                    <label class="custom-control-label" for="toggleLabels">Label Columns and Rows</label>
+                    <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" checked>
+                    <label class="custom-control-label" for="toggleLabels">Labels</label>
                 </div>
 
                 <div class="custom-control custom-switch custom-control-inline">
-                    <input type="hidden" name="toggle_answers" value="0">
-                    <input type="checkbox" class="custom-control-input" name="toggle_answers" id="toggleAnswers" value="1" checked>
-                    <label class="custom-control-label" for="toggleAnswers">Show Answers</label>
+                    <input type="checkbox" class="custom-control-input" name="toggle_answers" id="toggleAnswers" checked>
+                    <label class="custom-control-label" for="toggleAnswers">Answers</label>
                 </div>
-        </div>
+            </div>
 
-        <div class="card-body d-flex justify-content-center">
+    <div class="card-body d-flex justify-content-center">
+        <div class="col-auto">
             <table>
                 <tr>
                     <?php foreach($letters as $letter): ?>
@@ -205,37 +214,15 @@
                 <?php for($row = 0; $row < $_SESSION['data']['height']; $row++): ?>
                     <tr>
                         <td class="rowLabel bg-success d-none"><?php echo $row + 1; ?></td>
-                        <?php for($col = 0; $col < $_SESSION['data']['width']; $col++): ?>
-                        
-                            <?php
-                            
-                            $answerLetter = FALSE;
-                            for($i = 0; $i < sizeof($_SESSION['data']['answer_coordinates']); $i++){
-                                for($j = 0; $j < sizeof($_SESSION['data']['answer_coordinates'][$i]); $j++){
-                                    $index = $_SESSION['data']['answer_coordinates'][$i][$j];
-                                    if($index[0] == $row && $index[1] == $col){
-                                        $answerLetter = TRUE;
-                                    }
-                                }
-                            }
-
-                            if($answerLetter):
-                            
-                            ?>
-
-                                <td id="<?php echo $row . $col; ?>"><?php echo $_SESSION['data']['board'][$row][$col]; ?></td>
-
-                            <?php else: // answerLetter ?>
-
-                                <td id="<?php echo $row . $col; ?>"><?php echo $_SESSION['data']['board'][$row][$col]; ?></td>
-
-                            <?php endif; // answerLetter ?>
-                        <?php endfor;  // end col ?>
+                    <?php for($col = 0; $col < $_SESSION['data']['width']; $col++): ?>
+                        <td id="<?php echo 'r' . $row . 'c' . $col; ?>"><?php echo $_SESSION['data']['board'][$row][$col]; ?></td>       
+                    <?php endfor;  // end col ?>
                     </tr>
-                    <?php endfor; // end row ?>
+                <?php endfor; // end row ?>
             </table>
         </div>
     </div>
+</div>
 
     <?php else: // puzzle generated ?>
                     <div class="form-group col-md-12">
@@ -247,9 +234,9 @@
     </form>
 
     <?php
-        endif; // $_SERVER['REQUEST_METHOD'] == 'POST'
+        endif;
         
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        if($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['data']['generate_board']){
             addSolution($_SESSION['data']);
         }
 

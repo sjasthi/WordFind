@@ -1,12 +1,23 @@
-function circleAnswers(beginCoord, direction, length){
-    
-    $("table td[id=" +beginCoord+ "]").css('position', 'relative');
 
-    var answer = $("<div></div>").text("");
-    $(answer).addClass('solutionX');
-    $(answer).addClass('border border-success');
-    $(answer).css('position', 'absolute');
-    $(answer).css("width", length);
+
+function circleAnswers(beginCoord, direction, length){
+
+    // find max td width and make all tds same width
+    // var maxWidth = -1;
+    // $('table td').each(function() {
+    //     maxWidth = Math.ceil(maxWidth > $(this).width()) ? maxWidth : Math.ceil($(this).width());
+        $('table td').css('height', 50).css('width', 50);
+
+    //     // cookie used in getSolutionLength() -functions.php
+    //     document.cookie="width=" + maxWidth;
+
+    // });
+
+    var beginAnswer = $("table td[id=" + beginCoord + "]");
+    $(beginAnswer).css('position', 'relative');
+    var answer = $("<div></div>")
+    $(answer).addClass('solutionX border border-primary');
+    $(answer).css('position', 'absolute').css("width", length);
     
     switch(direction){
         case 0:
@@ -47,10 +58,10 @@ function circleAnswers(beginCoord, direction, length){
         case 5:
             $(answer).css("msTransform", 'rotate(45deg)');
             $(answer).css("WebkitTransform", 'rotate(45deg)');
-            $(answer).css('transform-origin', '23.5px 24px');
-            $(answer).css('-webkit-transform-origin', '23.5px 24px');
-            $(answer).css('-ms-transform-origin', '23.5px 24px');
-            $(answer).css('-o-transform-origin', '23.5px 24px');
+            $(answer).css('transform-origin', '23.5px 27px');
+            $(answer).css('-webkit-transform-origin', '23.5px 27px');
+            $(answer).css('-ms-transform-origin', '23.5px 27px');
+            $(answer).css('-o-transform-origin', '23.5px 27px');
             break;
         case 6:
             $(answer).css("msTransform", 'rotate(225deg)');
@@ -71,10 +82,11 @@ function circleAnswers(beginCoord, direction, length){
         case 8:
             $(answer).css("msTransform", 'rotate(315deg)');
             $(answer).css("WebkitTransform", 'rotate(315deg)');
-            $(answer).css('transform-origin', '23.5px 25px');
-            $(answer).css('-webkit-transform-origin', '23.5px 25px');
-            $(answer).css('-ms-transform-origin', '23.5px 25px');
-            $(answer).css('-o-transform-origin', '23.5px 25px');
+            $(answer).css('transform-origin', '24.5px 23px');
+            $(answer).css('-webkit-transform-origin', '24.5px 23px');
+            $(answer).css('-ms-transform-origin', '24.5px 23px');
+            $(answer).css('-o-transform-origin', '24.5px 23px');
     }
-    $("table td[id*=" +beginCoord+ "]").append(answer);
+    $(beginAnswer).append(answer);
 }
+
