@@ -13,18 +13,19 @@
     <link rel="icon" href="images/favico.ico">
 
     <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- Latest compiled JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="js/html2canvas.js"></script>
+    <script src="js/circle_solutions.js"></script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale = 1">
     <title><?php echo $pageTitle; ?></title>
 </head>
-<script src="js/circle_solutions.js"></script>
+
 <body class="d-flex flex-column">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
@@ -40,12 +41,11 @@
                     <a class="nav-item nav-link<?php echo ($pageTitle == 'login') ? ' active' : '' ; ?>" href="login.php">Login</a>
                 </div>
 
-                <form class="form-inline" action="search.php" method="post">
-                    <input class="form-control mr-sm-2" type="search" placeholder="category, title, author, date created" onfocus="this.placeholder = ''" onblur="this.placeholder = 'category, title, author, date created'" size="33" aria-label="Search">
+                <form id="search" class="form-inline" action="search.php" method="post">
+                    <input class="form-control mr-sm-2" type="search" name="query" placeholder="category, title, author, date created" onfocus="this.placeholder = ''" onblur="this.placeholder = 'category, title, author, date created'" size="33" aria-label="Search" value="<?php echo isset($_POST['query']) ? $_POST['query'] : ''; ?>">
                     <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </div>
-            
         </div>
     </nav>
 

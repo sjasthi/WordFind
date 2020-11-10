@@ -9,39 +9,52 @@
 
     function getCategoriesWithTopNResults($pdo){
         $sql = "SELECT cat_name, categories.cat_id,
-            SUBSTRING_INDEX(GROUP_CONCAT(puzzles.title), ',', 5) AS puzzle_names, -- show top 5 results --
-            SUBSTRING_INDEX(GROUP_CONCAT(puzzles.puzzle_id), ',', 5) AS puzzle_ids -- id top 5 results --
-            FROM puzzles
-            LEFT JOIN categories
-            ON categories.cat_id = puzzles.cat_id
-            GROUP BY categories.cat_name";
+                SUBSTRING_INDEX(GROUP_CONCAT(puzzles.title), ',', 5) AS puzzle_names, -- show top 5 results --
+                SUBSTRING_INDEX(GROUP_CONCAT(puzzles.puzzle_id), ',', 5) AS puzzle_ids -- id top 5 results --
+                FROM puzzles
+                INNER JOIN categories
+                ON categories.cat_id = puzzles.cat_id
+                GROUP BY categories.cat_name
+                ORDER BY categories.cat_id
+        ";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
+
     function getCategoryById($categoryId, $pdo){
         $sql = "SELECT cat_name,
-            GROUP_CONCAT(puzzles.title) AS puzzle_names,
-            GROUP_CONCAT(puzzles.puzzle_id) AS puzzle_ids,
-            GROUP_CONCAT(puzzles.description) AS puzzle_descriptions
-            FROM puzzles
-            LEFT JOIN categories
-            ON categories.cat_id = puzzles.cat_id
-            WHERE puzzles.cat_id = :category_id
-            GROUP BY categories.cat_name";
+                GROUP_CONCAT(puzzles.title) AS puzzle_names,
+                GROUP_CONCAT(puzzles.puzzle_id) AS puzzle_ids,
+                GROUP_CONCAT(puzzles.description) AS puzzle_descriptions
+                FROM puzzles
+                LEFT JOIN categories
+                ON categories.cat_id = puzzles.cat_id
+                WHERE puzzles.cat_id = :category_id
+        ";
             
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['category_id' => $categoryId]);
         return $stmt->fetchAll();
     }
 
-    function setControlCookies($data){
-        $alphabet = range('A', 'Z');
-        $letters = array_slice($alphabet, 0, $data['width']);
-        // add 0 to corner of table
+    function getTableHeader($data){
+        $letters = [];
+        for($x = 'A'; $x <= 'ZZ'; $x++){
+            array_push($letters, $x);
+        }
+        $letters = array_slice($letters, 0, $data['width']);
+        // add 0 to the corner of the table
         array_unshift($letters, 0);
+        
+
+        return $letters;
+        
+    }
+
+    function setControlCookies(){
         
         $expire = time() + (86400 * 7); // 7 days
 
@@ -59,8 +72,38 @@
             setcookie('answers', $_POST['toggle_answers'], $expire);
             $_COOKIE['answers'] = $_POST['toggle_answers'];
         }
+    }
 
-        return $letters;
+    function search($pdo){
+
+        // Sanitize POST data
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $data = [
+            'query' => trim($_POST['query']),
+        ];
+
+        $sql = "SELECT categories.cat_id, puzzle_id, cat_name, title, description, created_on, users.first_name, users.last_name
+                FROM puzzles
+                INNER JOIN categories
+                ON puzzles.cat_id = categories.cat_id
+                INNER JOIN users
+                ON users.user_id = puzzles.author_id
+                WHERE cat_name LIKE '%' :query '%'
+                OR title LIKE '%' :query '%'
+                OR users.first_name LIKE '%' :query '%'
+                OR users.last_name LIKE '%' :query '%'
+                OR CONCAT(users.first_name, ' ', users.last_name) LIKE '%' :query '%'
+
+
+                OR created_on LIKE '%' :query '%'
+                ORDER BY categories.cat_id
+                LIMIT 3
+        ";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':query' => $data['query']]);
+        return $stmt->fetchAll();
     }
 
     function generatePuzzle(){
@@ -69,9 +112,9 @@
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
         $data = [
-            'cat_name'          => $_POST['cat_name'],
-            'title'             => $_POST['title'],
-            'description'       => $_POST['description'],
+            'cat_name'          => trim($_POST['cat_name']),
+            'title'             => trim($_POST['title']),
+            'description'       => trim($_POST['description']),
             'author_id'         => 1, // will utilize logged in user in future iterations
             'language'          => $_POST['language'],
             'word_direction'    => $_POST['word_direction'],
@@ -79,12 +122,16 @@
             'width'             => $_POST['width'],
             'share_chars'       => $_POST['share_chars'],
             'filler_char_types' => $_POST['filler_char_types'],
-            'word_bank'         => $_POST['word_bank'],
+            'word_bank'         => trim($_POST['word_bank']),
             'generate_board'    => TRUE
         ];
 
+        
+        $data['word_bank'] = str_replace(' ', '', $data['word_bank']);
+        echo $data['word_bank'];
         // break string into array
         $wordBank = explode("\n", $data['word_bank']);
+        
 
         $rawWordBank = [];
 
@@ -103,53 +150,73 @@
 
         unset($data['word_bank']);
         $data['word_bank'] = [];
-
+        
         $charBank = [];
         foreach($rawWordBank as $word){
+
             array_push($data['word_bank'], $word);
             $wordProcessor = new wordProcessor($word);
 
             // get logical chars of word
             $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
 
-            // check grid dimensions are not too small for logChars
-            // if(sizeof($logChars) > $data['height'] && sizeof($logChars) > $data['width']){
-            //     $data['error'] = 'At least one of the words in your word bank is too large for the specified dimensions. Please adjust grid dimensions.';
-            //     $data['generate_board'] = FALSE;
-            // } else {
+            // echo '<pre>';
+            // print_r($logChars);
+            // echo '</pre>';
 
+            // If an input word contains the space,
+            // then find the length of each segment of the word.
+            // split each segment into mini-collection of characters
+            // combine the lengths to find the total length of the word
+            // combine the mini-collections to make a bigger collection.
 
-                foreach($logChars as $singleChar){
-                    if($singleChar === " "){
-                        $singleChar = "";
-                    }
-                }
+                // foreach($logChars as $singleChar){
+                //     if($singleChar === " "){
+                //         $singleChar = "X";
+                //         echo $singleChar;
+                //     }
+                // }
                 array_push($charBank, $logChars);
-            // }
-        } // end foreach
 
-        // push to data
-        $data['char_bank'] = $charBank;
-
-        // build board
-        if(parseList($data) == TRUE){
-            $legalBoard = FALSE;
-
-            while($legalBoard == FALSE){
-                clearBoard($data);
-                $legalBoard = fillBoard($data);
-            }
-
-            addFoils($data);
+                if(sizeof($logChars) == 0){
+                    $data['error'] = 'Might want to check the word bank!';
+                    $data['generate_board'] = FALSE;
+                } 
+                
+                if(sizeof($logChars) + 1 > $data['height'] || sizeof($logChars) + 1 > $data['width']){
+                    $data['error'] = 'You need to make your grid dimensions bigger!';
+                    $data['generate_board'] = FALSE;
+                }
             
 
-            // set legalBoard to data
-            global $board, $solutionDirections, $answerCoords;
-            $data['board'] = $board;
-            $data['solution_directions'] = $solutionDirections;
-            $data['answer_coordinates'] = $answerCoords;
+        } // end foreach
+
+        if($data['generate_board']){
+            // push to data
+            $data['char_bank'] = $charBank;
+
+            // build board
+            if(parseList($data) == TRUE){
+                $legalBoard = FALSE;
+
+                while($legalBoard == FALSE){
+                    clearBoard($data);
+                    $legalBoard = fillBoard($data);
+                }
+
+                addFoils($data);
+                
+
+                // set legalBoard to data
+                global $board, $solutionDirections, $answerCoords;
+                $data['board'] = $board;
+                $data['solution_directions'] = $solutionDirections;
+                $data['answer_coordinates'] = $answerCoords;
+            }
         }
+
         return $data;
+        
     }
 
     // init board w/ . . .
@@ -162,8 +229,6 @@
         }
     }
 
-    // THIS IS WHAT IS BROKEN - i think??
-    // ONLY HAPPENS WITH 2 OR MORE WORDS
     function fillBoard($data){
         global $solutionDirections, $coords, $answerCoords;
         $solutionDirections = array();
@@ -473,7 +538,6 @@
 
     } // end addWord
 
-
     function parseList($data){
         //gets word list, creates array of words from it
         //or return false if impossible
@@ -483,18 +547,6 @@
             echo "\n";
             $processor = new wordProcessor($wordIndexArray);
             $wordIndex = $processor->parseToLogicalChars($wordIndexArray,$data['language']);
-    
-            //stop if any words are too long to fit in puzzle
-            if(sizeof($wordIndex) > $data['height'] && sizeof($wordIndex) > $data['width']){
-                $data['error'] = 'At least one of the words in your word bank is too large for the specified dimensions. Please adjust grid dimensions.';
-                $data['generate_board'] = FALSE;
-            
-            
-                // if ((sizeof($wordIndex) > $data['width']) && (sizeof($wordIndex) > $data['height'])) {
-                // print "$wordIndex is too long for puzzle";
-                // print "Please increase the grid size in previous page and try again";
-                // $data['generate_board'] = FALSE;
-            } // end if
         }
         
         return $data;
@@ -503,7 +555,7 @@
     // add extra letters //
     function addFoils($data){
         $fillerChars = $data['filler_char_types'];
-        // $fillerChars1 = $_GET['fillerTypes'];;
+        
         //add random dummy characters to board
         $language = $data['language'];
         global $board;
@@ -583,7 +635,7 @@
                                 if($hexcode == 0x004F){
                                     continue;
                                 }
-
+                                
                                 if($fillerChars == "Consonants"){
                                     if(isCharVowel($hexcode, $language)){
                                         continue;
@@ -624,7 +676,6 @@
                                 $endHex = "0x0c39";
                                 $num = rand(hexdec($startHex), hexdec($endHex));
                                 $hexcode = dechex($num);
-                                // var_dump($hexcode);
 
                                 if(is_blank_Telugu($hexcode)){
                                     continue;
@@ -958,11 +1009,11 @@
     function addSolution($data){
         $counter = 0;
         foreach($data['answer_coordinates'] as $wordCoord){
-            $begCoord = "".$wordCoord[0][0] . "". $wordCoord[0][1] . "";
+
+            $begCoord = "r". $wordCoord[0][0] . "c". $wordCoord[0][1] . "";
 
             $direction = getDirection($data['solution_directions'][$counter]);
-            $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1]);
-            // $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1], $direction);
+            $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1], $direction);
 
             circleAnswers($begCoord, $direction, $length);
 
@@ -970,162 +1021,25 @@
         }
     }
 
-    function getSolutionLength($beginRow, $beginCol, $endRow, $endCol){
+    function getSolutionLength($beginRow, $beginCol, $endRow, $endCol, $direction){
+        
+        $tdWidth = 50;
+        // $tdWidth = $_COOKIE['width'];
 
-        $adjustedLength = 0;
-        $oneChar = 0.5;
-        $multiplier = 55;
-        $lengthIncreaser = 1.4;
-        $lengthFactor = 0.35;
-
-        $length = sqrt(pow($endRow - $beginRow, 2) + pow($endCol - $beginCol, 2));
-    
-        if($beginRow == $endRow && $beginCol == $endCol){
-            $length = $oneChar;
+        if($direction == 1){ // E
+            $length = ($endCol-$beginCol + 1) * $tdWidth;
+        } elseif($direction == 2){ // W
+            $length = ($beginCol-$endCol + 1) * $tdWidth;
+        } elseif($direction == 3){ // S
+            $length = ($endRow-$beginRow + 1) * $tdWidth;
+        } elseif($direction == 4){ // N
+            $length = ($beginRow-$endRow + 1) * $tdWidth;
+        } else { // SE NW SW NE
+            $length = (sqrt(pow($endRow - $beginRow, 2) + pow($endCol - $beginCol, 2)) + 1) * $tdWidth;
         }
 
-        if($length > $oneChar && $length < 5){
-            $adjustedLength = round($length * ($multiplier * ((($lengthIncreaser / $length) * $lengthFactor) + 1)));
-        } else {
-            $adjustedLength = round($length * $multiplier);
-        }
-        return $adjustedLength;
+        return $length;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // function getSolutionLength($beginRow, $beginCol, $endRow, $endCol, $direction){
-
-    //     $tdWidth = 49.7;
-    //     // // echo $beginCol;
-    //     // // echo $endCol;
-    //     echo $direction;
-
-    //     // echo $length = ($beginCol-$endCol + 1) * $tdWidth;
-
-        
-
-    //     // case "N":
-    //     //     $retVal = 4;
-    //     //     break;
-    //     // case "E":
-    //     //     $retVal = 1;
-    //     //     break;
-    //     // case "S":
-    //     //     $retVal = 3;
-    //     //     break;
-    //     // case "W":
-    //     //     $retVal = 2;
-    //     //     break;
-    //     // case "NW":
-    //     //     $retVal = 6;
-    //     //     break;
-    //     // case "NE":
-    //     //     $retVal = 8;
-    //     //     break;
-    //     // case "SE":
-    //     //     $retVal = 5;
-    //     //     break;
-    //     // case "SW":
-    //     //     $retVal = 7;
-
-    //     if($direction == 1 || $direction == 2){
-    //         $length = ($beginCol-$endCol + 1) * $tdWidth;
-    //     }
-        
-    //     // if($direction == 3 || 4){
-    //     //     $length = ($beginRow-$endRow + 1) * $tdWidth;
-    //     // }
-
-
-
-    //     return $length;
-
-    //     // $adjustedLength = 0;
-    //     // $oneChar = 0.5;
-    //     // $multiplier = 55;
-    //     // $lengthIncreaser = 1.4;
-    //     // $lengthFactor = 0.35;
-
-
-    //     // $adjustedLength = 0;
-    //     // $oneChar = .5;
-    //     // $multiplier = 55;
-    //     // $lengthIncreaser = 1.4;
-    //     // $lengthFactor = 0.35;
-
-    //     // $length = sqrt(pow($endRow - $beginRow, 2) + pow($endCol - $beginCol, 2));
-    
-    //     // if($beginRow == $endRow && $beginCol == $endCol){
-    //     //     $length = $oneChar;
-    //     // }
-
-    //     // if($length > $oneChar && $length < 5){
-    //     //     $adjustedLength = round($length * ($multiplier * ((($lengthIncreaser / $length) * $lengthFactor) + 1)));
-    //     // } else {
-    //     //     $adjustedLength = round($length * $multiplier);
-    //     // }
-    //     // return $adjustedLength;
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     function getDirection($direction){
         $retVal = 0;

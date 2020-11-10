@@ -23,7 +23,7 @@
 
 <?php foreach($data['puzzle'] as $index => $puzzle): ?>
 
-    <div class="card mt-4">
+    <div class="card mt-3">
         <h6 class="card-header"><a href="puzzle.php?puzzleId=<?php echo $data['puzzle_id'][$index]; ?>" class="card-link"><?php echo $puzzle; ?></a></h6>
         <div class="card-body">
             <p class="card-text"><?php echo $data['puzzle_description'][$index]; ?></p>
