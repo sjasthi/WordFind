@@ -2,17 +2,6 @@
 
 function circleAnswers(beginCoord, direction, length){
 
-    // find max td width and make all tds same width
-    // var maxWidth = -1;
-    // $('table td').each(function() {
-    //     maxWidth = Math.ceil(maxWidth > $(this).width()) ? maxWidth : Math.ceil($(this).width());
-        $('table td').css('height', 50).css('width', 50);
-
-    //     // cookie used in getSolutionLength() -functions.php
-    //     document.cookie="width=" + maxWidth;
-
-    // });
-
     var beginAnswer = $("table td[id=" + beginCoord + "]");
     $(beginAnswer).css('position', 'relative');
     var answer = $("<div></div>")
