@@ -37,17 +37,17 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="category">Category</label>
-                        <input type="text" name="cat_name" id="category" class="form-control" value="<?php echo (isset($_POST['cat_name'])) ? $_POST['cat_name'] : '' ?>">
+                        <input type="text" name="cat_name" id="category" class="form-control" value="<?php echo (isset($_POST['cat_name'])) ? $_POST['cat_name'] : 'Category' ?>">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="title">Title</label>
-                        <input type="text" name="title" id="title" class="form-control" value="<?php echo (isset($_POST['title'])) ? $_POST['title'] : '' ?>">
+                        <input type="text" name="title" id="title" class="form-control" value="<?php echo (isset($_POST['title'])) ? $_POST['title'] : 'Title' ?>">
                     </div>
 
                     <div class="form-group col-md-12">
                         <label for="description">Description</label>
-                        <input type="text" name="description" id="description" class="form-control" value="<?php echo (isset($_POST['description'])) ? $_POST['description'] : '' ?>">
+                        <input type="text" name="description" id="description" class="form-control" value="<?php echo (isset($_POST['description'])) ? $_POST['description'] : 'Description' ?>">
                     </div>
 
                     <div class="form-group col-md-6">

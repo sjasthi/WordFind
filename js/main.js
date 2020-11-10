@@ -70,26 +70,4 @@ $(function(){
         $("html, body").scrollTop(0);
         html2canvas(document.querySelector("#puzzle"), {scrollX: 0, scrollY: -22}).then(canvas => canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})])));
     });
-
-    
-    // if ($("table").length){
-        
-    //     // refresh page to get current cookie
-    //     var url = window.location.href; // get the current url of page into variable
-    //     {
-    //     if (url.indexOf('?') > -1) { // url has a '?'
-    //         if(url.indexOf('reloaded') < 0){ // url does not have the text 'reloaded'
-    //                 url = url + "&reloaded=true"; // add the word 'reloaded' to url
-    //                 window.location = url; // "reload" the page
-    //         }
-    //     }
-    // }
-
-
-
-        
-    // }
-
-
-
 });
