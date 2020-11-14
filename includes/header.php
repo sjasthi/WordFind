@@ -4,9 +4,9 @@
     require_once 'indic-wp/word_processor.php';
     session_start();
 
-    // if(isset($_POST['login'])){
-    //     login();
-    // }
+    if(isset($_POST['login'])){
+        login($pdo);
+    }
 
     // if(isset($_POST['register'])){
     //     register();

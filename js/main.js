@@ -1,4 +1,15 @@
 $(function(){ // docuemnt ready
+    
+    $('#login').click(function(){
+        var email = $('#loginEmail').val();
+        var password = $('#loginPassword').val();
+
+        if(email == "" || password == ""){
+            $('#loginAlert').removeClass('d-none');
+            // $('#loginAlert span').text('need a username and password');
+            
+        }
+    });
 
     // disable search btn if input is empty
     $('#search button').prop('disabled',true);

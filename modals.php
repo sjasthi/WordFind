@@ -2,7 +2,7 @@
 <div class="modal" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form>
+                <form action="" method="post">
                     <div class="modal-header pb-0">
                         <h3 class="modal-title" id="loginModalLabel">Login 
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-door-open-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -13,9 +13,8 @@
                     </div>
 
                     <div class="modal-body">
-
-                        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-                            Wrong email or password
+                        <div class="alert alert-danger alert-dismissible fade show mt-2 d-none" id="loginAlert" role="alert">
+                            <span></span>
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -23,7 +22,7 @@
 
                         <div class="form-group">
                             <label for="loginEmail" class="col-form-label">Email:</label>
-                            <input type="email" class="form-control" id="loginEmail" name="email">
+                            <input type="email" class="form-control" id="loginEmail">
                         </div>
 
                         <div class="form-group">
@@ -33,7 +32,7 @@
 
                         <div class="row">
                             <div class="col pr-1">
-                                <button type="button" class="btn btn-primary btn-block" name="login">Login</button>
+                                <button type="button" class="btn btn-primary btn-block" id="login" name="login">Login</button>
                             </div>
 
                             <div class="col pl-1">
