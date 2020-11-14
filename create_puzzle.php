@@ -29,8 +29,6 @@
     </div>
 
 <?php endif; ?>
-
-
     <form action="" method="post">
         <div class="row mt-4">
             <div class="col-md-8">
@@ -115,48 +113,28 @@
 
                     <div class="form-group col-md-6">
                         <label for="filler_char_types">Filler Character Types</label>
+                        <select name="filler_char_types" id="fillerCharTypes" class="form-control">
 
                         <?php
-                        
-                            $languages = ['English', 'Telugu', 'Hindi', 'Gujarati', 'Malayalam'];
-                            foreach($languages as $language):
-                        
+                            $charTypes = [
+                                'Any' => 'Any',
+                                'Consonants' => 'Consonants',
+                                'Vowels' => 'Vowels',
+                                'VM' => 'Vowel Mixers',
+                                'SCB' => 'Consonant Blends',
+                                'DCB' => 'Double Consonant Blends',
+                                'TCB' => 'Triple Consonant Blends',
+                                'CBV' => 'Consonant Blends with Vowels',
+                                'LFIW' => 'Letters From Input Words'
+                            ];
+
+                            foreach($charTypes as $key => $type):
                         ?>
 
-                        <select name="filler_char_types" id="<?php echo $language; ?>"<?php echo $language != 'English' ? 'style="display:none"' : ''; ?> class="form-control"<?php echo $language != 'English' ? 'disabled' : '' ;?>>
+                            <option value="<?php echo $key; ?>" <?php echo isset($_POST['filler_char_types']) && $_POST['filler_char_types'] == $type ? 'selected ="selected"' : '' ?>><?php echo $type; ?></option>
 
-                                <?php
-                                
-                                if($language != 'English'):
-
-                                    $charTypes = ['Any', 'Consonants', 'Vowels', 'Single Consonant Blends', 'Double Consonant Blends', 'Triple Consonant Blends', 'Consonant Blends and Vowels']; 
-        
-                                    foreach($charTypes as $type):
-                                     
-                                ?>
-
-                                        <option value="<?php echo $type; ?>" <?php echo isset($_POST['filler_char_types']) && $_POST['filler_char_types'] == $type ? 'selected ="selected"' : '' ?>><?php echo $type; ?></option>
-
-                                <?php
-                                
-                                    endforeach; // end charTypes
-
-                                else:
-                                    $charTypes = ['Any', 'Consonants', 'Vowels']; 
-                                    
-                                    foreach($charTypes as $type):
-                                
-                                ?>
-
-                                        <option value="<?php echo $type; ?>" <?php echo isset($_POST['filler_char_types']) && $_POST['filler_char_types'] == $type ? 'selected ="selected"' : '' ?>><?php echo $type; ?></option>
-
-                                <?php
-                                    endforeach; // end charTypes
-                                
-                                endif; // end language ?>
+                        <?php endforeach; // end charTypes ?>
                         </select>
-
-                        <?php endforeach; // end languages?>
                     </div>
                 </div>
             </div>
@@ -172,7 +150,7 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="form-row">
-    <?php if($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['data']['generate_board']): ?>
+                    <?php if(isset($_POST['generate_puzzle']) && $_SESSION['data']['generate_board']): ?>
                     <div class="form-group col-md-6">
                         <button class="btn btn-primary form-control" type="submit" name="generate_puzzle">Generate Puzzle</button>
                     </div>
@@ -197,8 +175,8 @@
                 </div>
 
                 <div class="custom-control custom-switch custom-control-inline">
-                    <input type="checkbox" class="custom-control-input" name="toggle_answers" id="toggleAnswers" checked>
-                    <label class="custom-control-label" for="toggleAnswers">Answers</label>
+                    <input type="checkbox" class="custom-control-input" name="toggle_answers" id="toggleSolutionLines" checked>
+                    <label class="custom-control-label" for="toggleSolutionLines">Answers</label>
                 </div>
             </div>
 
@@ -235,8 +213,7 @@
 
     <?php
         endif;
-        
-        if($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['data']['generate_board']){
+        if(isset($_POST['generate_puzzle']) && $_SESSION['data']['generate_board']){
             addSolution($_SESSION['data']);
         }
 

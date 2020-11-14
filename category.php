@@ -8,12 +8,7 @@
 
     foreach($category as $cat){
 
-        $data = [
-            'cat_name' => $cat->cat_name,
-            'puzzle' => explode(',', $cat->puzzle_names),
-            'puzzle_id' => explode(',', $cat->puzzle_ids),
-            'puzzle_description' => explode(',', $cat->puzzle_descriptions)
-        ];
+        $data = ['cat_name' => $cat->cat_name];
     }
 ?>
 
@@ -21,12 +16,18 @@
     <h5 class="card-header"><?php echo $data['cat_name']; ?></h5>
 </div>
 
-<?php foreach($data['puzzle'] as $index => $puzzle): ?>
+<?php foreach($category as $cat): ?>
 
     <div class="card mt-3">
-        <h6 class="card-header"><a href="puzzle.php?puzzleId=<?php echo $data['puzzle_id'][$index]; ?>" class="card-link"><?php echo $puzzle; ?></a></h6>
-        <div class="card-body">
-            <p class="card-text"><?php echo $data['puzzle_description'][$index]; ?></p>
+        <div class="list-group">
+            <h6 class="mb-0"><a href="puzzle.php?puzzleId=<?php echo $cat->puzzle_id; ?>" class="list-group-item list-group-item-action bg-light text-primary"><?php echo $cat->title; ?></a></h6>
+            <div class="card-body">
+                <p class="card-text text-muted">
+                    <?php echo $cat->description; ?>
+                    <br>Author: <?php echo $cat->first_name . ' ' . $cat->last_name; ?>
+                    <br>Added: <?php echo $cat->created_on; ?>
+                </p>
+            </div>
         </div>
     </div>
 

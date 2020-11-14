@@ -7,18 +7,21 @@
 	overflow-y: hidden;
 }
 
+table {
+	table-layout: fixed;
+}
+
 table, th, tr, td {
 	padding: 5px;
 	font-size: 30px;
 }
 
 td {
-	height: auto;
 	height: 50px;
-	width: 50px;
+	min-width: 50px;
 	padding: 0;
 	text-align: center;
-	
+	word-wrap: normal;
 }
 
  footer {
@@ -28,7 +31,6 @@ td {
  }
 
  .solutionX {
-	 border-radius: 20px;
 	 top: 0;
 	 bottom: 0;
 	 border-width: 3px !important;
