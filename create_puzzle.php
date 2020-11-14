@@ -117,21 +117,21 @@
 
                         <?php
                             $charTypes = [
-                                'Any' => 'Any',
+                                'Any'        => 'Any',
                                 'Consonants' => 'Consonants',
-                                'Vowels' => 'Vowels',
-                                'VM' => 'Vowel Mixers',
-                                'SCB' => 'Consonant Blends',
-                                'DCB' => 'Double Consonant Blends',
-                                'TCB' => 'Triple Consonant Blends',
-                                'CBV' => 'Consonant Blends with Vowels',
-                                'LFIW' => 'Letters From Input Words'
+                                'Vowels'     => 'Vowels',
+                                'VM'         => 'Vowel Mixers',
+                                'SCB'        => 'Consonant Blends',
+                                'DCB'        => 'Double Consonant Blends',
+                                'TCB'        => 'Triple Consonant Blends',
+                                'CBV'        => 'Consonant Blends with Vowels',
+                                'LFIW'       => 'Letters From Input Words'
                             ];
 
                             foreach($charTypes as $key => $type):
                         ?>
 
-                            <option value="<?php echo $key; ?>" <?php echo isset($_POST['filler_char_types']) && $_POST['filler_char_types'] == $type ? 'selected ="selected"' : '' ?>><?php echo $type; ?></option>
+                            <option value="<?php echo $key; ?>" <?php echo isset($_POST['filler_char_types']) && $_POST['filler_char_types'] == $key ? 'selected ="selected"' : '' ?>><?php echo $type; ?></option>
 
                         <?php endforeach; // end charTypes ?>
                         </select>
