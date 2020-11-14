@@ -35,36 +35,34 @@
     <div class="card mt-4">
     <h6 class="card-header">Word List</h6>
         <div class="card-body">
-            <p class="card-text"><?php echo implode(", ", $data['word_bank']); ?></p>
+            <p class="card-text"><?php echo implode(" &bull; ", $data['word_bank']); ?></p>
         </div>
     </div>
 
     <div class="card mt-4">
-        <div class="card-header mt-1 d-flex justify-content-between">
+    <div class="card-header mt-1 d-flex justify-content-between">
             <form id="controls" class="custom-control-inline" action="" method="post">
-        
+           
                 <div class="custom-control custom-switch custom-control-inline mt-1">
                     <input type="hidden" name="toggle_borders" value="0">
-                    <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked' : ''; ?>>
+                    <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : ''; ?>>
                     <label class="custom-control-label" for="toggleBorders">borders</label>
                 </div>
 
                 <div class="custom-control custom-switch custom-control-inline mt-1">
                     <input type="hidden" name="toggle_labels" value="0">
-                    <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked' : ''; ?>>
+                    <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : ''; ?>>
                     <label class="custom-control-label" for="toggleLabels">Labels</label>
                 </div>
 
                 <div class="custom-control custom-switch custom-control-inline mt-1">
-                    <input type="hidden" name="toggle_answers" value="0">
-                    <input type="checkbox" class="custom-control-input" name="toggle_answers" id="toggleAnswers" value="1"<?php echo (isset($_COOKIE['answers']) && $_COOKIE['answers'] == 1) ? ' checked' : ''; ?>>
-                    <label class="custom-control-label" for="toggleAnswers">Answers</label>
+                    <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
+                    <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
+                    <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
                 </div>
-                
-            </form>
+            </form>          
 
-            <button type="button" id="copyMe" class="btn btn-outline-primary btn-sm">Copy Puzzle</button>
-            
+            <button type="button" id="copyMe" class="btn btn-outline-primary btn-sm">Copy Puzzle</button>  
         </div>
         
         <div id="puzzleContainer" class="card-body d-flex justify-content-center">
