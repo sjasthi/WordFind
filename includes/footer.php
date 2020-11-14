@@ -7,6 +7,7 @@
        </div>
     </footer>
 
+    <?php require_once 'modals.php'; ?>
     <script src="js/main.js"></script>
 </body>
 </html>

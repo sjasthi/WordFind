@@ -1,5 +1,4 @@
 <?php
-
     function getPuzzleById($pdo, $puzzleId){
         $sql = 'SELECT * from puzzles WHERE puzzle_id = :puzzle_id';
         $stmt = $pdo->prepare($sql);
@@ -9,8 +8,8 @@
 
     function getCategoriesWithTopNResults($pdo){
         $sql = "SELECT cat_name, categories.cat_id,
-                SUBSTRING_INDEX(GROUP_CONCAT(puzzles.title), ',', 5) AS puzzle_names, -- show top 5 results --
-                SUBSTRING_INDEX(GROUP_CONCAT(puzzles.puzzle_id), ',', 5) AS puzzle_ids -- id top 5 results --
+                SUBSTRING_INDEX(GROUP_CONCAT(puzzles.title ORDER BY puzzles.puzzle_id DESC), ',', 5) AS puzzle_names, -- show top 5 results --
+                SUBSTRING_INDEX(GROUP_CONCAT(puzzles.puzzle_id ORDER BY puzzles.puzzle_id DESC), ',', 5) AS puzzle_ids -- id top 5 results --
                 FROM puzzles
                 INNER JOIN categories
                 ON categories.cat_id = puzzles.cat_id
@@ -23,15 +22,13 @@
         return $stmt->fetchAll();
     }
 
-
     function getCategoryById($categoryId, $pdo){
-        $sql = "SELECT cat_name,
-                GROUP_CONCAT(puzzles.title) AS puzzle_names,
-                GROUP_CONCAT(puzzles.puzzle_id) AS puzzle_ids,
-                GROUP_CONCAT(puzzles.description) AS puzzle_descriptions
+        $sql = "SELECT cat_name, puzzle_id, title, description, first_name, last_name, created_on
                 FROM puzzles
                 LEFT JOIN categories
                 ON categories.cat_id = puzzles.cat_id
+                INNER JOIN users
+                ON users.id = puzzles.author_id
                 WHERE puzzles.cat_id = :category_id
         ";
             
@@ -49,7 +46,6 @@
         // add 0 to the corner of the table
         array_unshift($letters, 0);
         
-
         return $letters;
         
     }
@@ -68,9 +64,14 @@
             $_COOKIE['labels'] = $_POST['toggle_labels'];
         }
 
-        if(isset($_POST['toggle_answers'])){
-            setcookie('answers', $_POST['toggle_answers'], $expire);
-            $_COOKIE['answers'] = $_POST['toggle_answers'];
+        if(isset($_POST['toggle_solution_lines'])){
+            setcookie('solution_lines', $_POST['toggle_solution_lines'], $expire);
+            $_COOKIE['solution_lines'] = $_POST['toggle_solution_lines'];
+        }
+
+        if(isset($_POST['toggle_solution_circles'])){
+            setcookie('solution_circles', $_POST['toggle_solution_circles'], $expire);
+            $_COOKIE['solution_circles'] = $_POST['toggle_solution_circles'];
         }
     }
 
@@ -88,17 +89,14 @@
                 INNER JOIN categories
                 ON puzzles.cat_id = categories.cat_id
                 INNER JOIN users
-                ON users.user_id = puzzles.author_id
+                ON users.id = puzzles.author_id
                 WHERE cat_name LIKE '%' :query '%'
                 OR title LIKE '%' :query '%'
                 OR users.first_name LIKE '%' :query '%'
                 OR users.last_name LIKE '%' :query '%'
                 OR CONCAT(users.first_name, ' ', users.last_name) LIKE '%' :query '%'
-
-
                 OR created_on LIKE '%' :query '%'
                 ORDER BY categories.cat_id
-                LIMIT 3
         ";
 
         $stmt = $pdo->prepare($sql);
@@ -126,9 +124,6 @@
             'generate_board'    => TRUE
         ];
 
-        
-        $data['word_bank'] = str_replace(' ', '', $data['word_bank']);
-        echo $data['word_bank'];
         // break string into array
         $wordBank = explode("\n", $data['word_bank']);
         
@@ -160,33 +155,29 @@
             // get logical chars of word
             $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
 
-            // echo '<pre>';
-            // print_r($logChars);
-            // echo '</pre>';
-
-            // If an input word contains the space,
-            // then find the length of each segment of the word.
-            // split each segment into mini-collection of characters
-            // combine the lengths to find the total length of the word
-            // combine the mini-collections to make a bigger collection.
-
-                // foreach($logChars as $singleChar){
-                //     if($singleChar === " "){
-                //         $singleChar = "X";
-                //         echo $singleChar;
-                //     }
-                // }
-                array_push($charBank, $logChars);
-
-                if(sizeof($logChars) == 0){
-                    $data['error'] = 'Might want to check the word bank!';
-                    $data['generate_board'] = FALSE;
-                } 
-                
-                if(sizeof($logChars) + 1 > $data['height'] || sizeof($logChars) + 1 > $data['width']){
-                    $data['error'] = 'You need to make your grid dimensions bigger!';
-                    $data['generate_board'] = FALSE;
+            for($x = 0; $x <= sizeof($logChars); $x++){
+                if (($key = array_search(' ', $logChars)) !== false) {
+                    unset($logChars[$key]);
                 }
+            }
+            $rawLogCharsBank = array_values(array_filter($logChars));
+
+            unset($rawWordBank);
+            unset($logChars);
+            $logChars = $rawLogCharsBank;
+            unset($rawLogCharsBank);
+
+            array_push($charBank, $logChars);
+
+            if(sizeof($logChars) == 0){
+                $data['error'] = 'Might want to check the word bank!';
+                $data['generate_board'] = FALSE;
+            } 
+            
+            if(sizeof($logChars) + 1 > $data['height'] || sizeof($logChars) + 1 > $data['width']){
+                $data['error'] = 'You need to make your grid dimensions bigger!';
+                $data['generate_board'] = FALSE;
+            }
             
 
         } // end foreach
@@ -586,9 +577,9 @@
             $word = explode(" ",trim($w));
             //echo "the word " . $w. "<br>";
             //echo " first words " . $word[0] . "<br>";
-            if(in_array("Vowels", $word)){
+            if(in_array("VOWELS", $word)){
                 $Vowels[]=$word[1];
-            } elseif(in_array("Consonants", $word)){
+            } elseif(in_array("CONSONANTS", $word)){
                 $constants[]=$word[1];
             } elseif(in_array("VOWELMIXERS", $word)){
                 $vowelMixers[]=$word[1];
@@ -797,7 +788,7 @@
                                 //var_dump($hexcode);
                                 if(is_blank_Gujarati($hexcode)){
                                     continue;
-                                }elseif($fillerChars == "Consonants"){
+                                } elseif($fillerChars == "Consonants"){
                                     if(isCharVowel($hexcode,$language)){
                                         continue;
                                     }
@@ -811,7 +802,7 @@
                                     $gujarati_char  .= sprintf("\\u%'04s", dechex($num));
                                     $board[$row][$col] = json_decode('"' . $gujarati_char  . '"');
                                     $validChar = true;
-                                }else{
+                                } else {
                                     $gujarati_char  .= sprintf("\\u%'04s", dechex($num));
                                 $board[$row][$col] = json_decode('"' . $gujarati_char  . '"');
                                 $validChar = true;
@@ -824,8 +815,8 @@
 
             case "Malayalam":
                 for ($row = 0; $row < $data["height"]; $row++){
-                    for ($col = 0; $col < $data["width"]; $col++){
-                        if ($board[$row][$col] == "."){
+                    for($col = 0; $col < $data["width"]; $col++){
+                        if($board[$row][$col] == "."){
                             //Make sure the character is valid
                             $validChar = false;
                             while(!$validChar){
@@ -846,14 +837,14 @@
                                     $malay_char .= sprintf("\\u%'04s", dechex($num));
                                     $board[$row][$col] = json_decode('"' . $malay_char. '"');
                                     $validChar = true;
-                                }elseif($fillerChars == "Vowels"){
+                                } elseif($fillerChars == "Vowels"){
                                     if(isCharConsonant($hexcode,$language)){
                                         continue;
                                     }
                                     $malay_char .= sprintf("\\u%'04s", dechex($num));
                                     $board[$row][$col] = json_decode('"' . $malay_char. '"');
                                     $validChar = true;
-                                }else{
+                                } else {
                                     $malay_char .= sprintf("\\u%'04s", dechex($num));
                                     $board[$row][$col] = json_decode('"' . $malay_char. '"');
                                     $validChar = true;
@@ -1013,18 +1004,21 @@
             $begCoord = "r". $wordCoord[0][0] . "c". $wordCoord[0][1] . "";
 
             $direction = getDirection($data['solution_directions'][$counter]);
-            $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1], $direction);
+            $language = $data['language'];
+            $length = getSolutionLength($wordCoord[0][0], $wordCoord[0][1], $wordCoord[sizeof($wordCoord) - 1][0], $wordCoord[sizeof($wordCoord) - 1][1], $direction, $language);
 
-            circleAnswers($begCoord, $direction, $length);
+            highlightSolution($begCoord, $direction, $length, $language);
 
             $counter++;
         }
     }
 
-    function getSolutionLength($beginRow, $beginCol, $endRow, $endCol, $direction){
+    function getSolutionLength($beginRow, $beginCol, $endRow, $endCol, $direction, $language){
         
         $tdWidth = 50;
-        // $tdWidth = $_COOKIE['width'];
+        if($language != 'English'){
+            $tdWidth = 60;
+        }
 
         if($direction == 1){ // E
             $length = ($endCol-$beginCol + 1) * $tdWidth;
@@ -1071,9 +1065,9 @@
         return $retVal;
     }
 
-    function circleAnswers($beginCoord, $direction, $length){
+    function highlightSolution($beginCoord, $direction, $length, $language){
         echo "<script type='text/javascript'>";
-        echo "circleAnswers('" . $beginCoord ."', ". $direction .", ". $length .");";
+        echo "highlightSolution('" . $beginCoord ."', ". $direction .", ". $length . ",'" . $language ."');";
         echo "</script>";
     }
 
