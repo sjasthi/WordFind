@@ -54,7 +54,7 @@
 
                         <?php
                         
-                            $languages = ['English', 'Telugu', 'Hindi', 'Gujarati', 'Malayalam'];
+                            $languages = ['Telugu', 'English', 'Hindi', 'Gujarati', 'Malayalam'];
                             foreach($languages as $language):
                         
                         ?>
@@ -93,7 +93,7 @@
 
                     <div class="form-group col-md-6">
                         <label for="width">Width</label>
-                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '12' ?>" class="form-control">
+                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '16' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
