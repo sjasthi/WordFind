@@ -1,4 +1,10 @@
 <?php
+
+    function login(){
+        
+    }
+
+
     function getPuzzleById($pdo, $puzzleId){
         $sql = 'SELECT * from puzzles WHERE puzzle_id = :puzzle_id';
         $stmt = $pdo->prepare($sql);
