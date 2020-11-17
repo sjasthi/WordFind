@@ -1,13 +1,130 @@
 $(function(){ // docuemnt ready
-    
-    $('#login').click(function(){
+
+    // hide alert when x is clicked
+    // bootstrap data-dismiss does not allow alert to come back after being dismissed
+    // this is the work around
+    $(function(){
+        $("[data-hide]").on("click", function(){
+            $(this).closest("." + $(this).attr("data-hide")).hide();
+        });
+    });
+
+    // register
+    $('#register').click(function(e){
+        e.preventDefault();
+        var firstName = $('#firstName').val();
+        var lastName = $('#lastName').val();
+        var email = $('#registerEmail').val();
+        var password = $('#registerPassword').val();
+        var confirmPassword = $('#confirmPassword').val();
+
+        var error = false;
+
+        if(firstName == ""){
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Enter your first name');
+        } else if (lastName == ""){
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Enter your last name');
+        } else if (email == ""){
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Enter your email');
+        } else if (email.indexOf("@") < 0 || email.indexOf(".") < 0){
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Invalid email');
+        } else if (password == ""){
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Enter your password');
+        } else if (!(password.length >= 5 && password.length <= 16)) {
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Password must be between 5 and 16 characters!');
+        } else if (confirmPassword == ""){
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Confirm your password');
+        } else if (password != confirmPassword){
+            error = true;
+            $('#registerAlert').show();
+            $('#registerAlert span').first().text('Password do not match!');
+        }
+
+        if(error == false){
+            $.ajax({
+                method: 'POST',
+                data: {
+                    register: 1,
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email,
+                    password: password
+                },
+                success: function(response){
+                    if(response.indexOf('registered') >= 0){
+                        $('#registerModal').modal('toggle');
+                        $("#loginBtn" ).trigger( "click" );
+                        $('#loginAlert').removeClass('alert-danger');
+                        $('#loginAlert').addClass('alert-success');
+                        $('#loginAlert').show();
+                        $('#loginAlert span').first().text(response);
+                    } else {
+                        $('#registerAlert').show();
+                        $('#registerAlert span').first().text(response);
+                    }
+                },
+                dataType: 'text'
+            });
+        }
+    });
+
+    // login
+    $('#login').click(function(e){
+        e.preventDefault();
         var email = $('#loginEmail').val();
         var password = $('#loginPassword').val();
+        var error = false;
 
-        if(email == "" || password == ""){
-            $('#loginAlert').removeClass('d-none');
-            // $('#loginAlert span').text('need a username and password');
-            
+        if(email == ""){
+            error = true;
+            $('#loginAlert').show();
+            $('#loginAlert span').first().text('Enter your email');
+        }
+
+        if(password == ""){
+            error = true;
+            $('#loginAlert').show();
+            $('#loginAlert span').first().text('Enter your password');
+        }
+
+        if(email == "" && password == ""){
+            error = true;
+            $('#loginAlert').show();
+            $('#loginAlert span').first().text('Enter your email and password');
+        }
+
+        if(error == false){
+            $.ajax({
+                method: 'POST',
+                data: {
+                    login: 1,
+                    email: email,
+                    password: password
+                },
+                success: function(response){
+                    if(response.indexOf('success') >= 0){
+                        window.location = window.location.href;
+                    } else {
+                        $('#loginAlert').show();
+                        $('#loginAlert span').first().text(response);
+                    }
+                },
+                dataType: 'text'
+            });
         }
     });
 

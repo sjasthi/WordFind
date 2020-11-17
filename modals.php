@@ -13,9 +13,9 @@
                     </div>
 
                     <div class="modal-body">
-                        <div class="alert alert-danger alert-dismissible fade show mt-2 d-none" id="loginAlert" role="alert">
+                        <div class="alert alert-danger alert-dismissible fade show mt-2" id="loginAlert" role="alert">
                             <span></span>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <button type="button" class="close" data-hide="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -32,7 +32,7 @@
 
                         <div class="row">
                             <div class="col pr-1">
-                                <button type="button" class="btn btn-primary btn-block" id="login" name="login">Login</button>
+                                <button type="submit" class="btn btn-primary btn-block" id="login" name="login">Login</button>
                             </div>
 
                             <div class="col pl-1">
@@ -64,9 +64,9 @@
 
                     <div class="modal-body">
 
-                        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-                            Email already exists!
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <div class="alert alert-danger alert-dismissible fade show mt-2" id="registerAlert" role="alert">
+                            <span></span>
+                            <button type="button" class="close" data-hide="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -87,24 +87,24 @@
 
                         <div class="form-group">
                             <label for="registerEmail" class="col-form-label">Email:</label>
-                            <input type="" class="form-control" id="registerEmail" name="email">
+                            <input type="email" class="form-control" id="registerEmail" name="email">
                         </div>
 
 
                         <div class="form-group">
                             <label for="registerPassword" class="col-form-label">Password:</label>
-                            <input type="" class="form-control" id="registerPassword" name="registerPassword">
+                            <input type="password" class="form-control" id="registerPassword" name="registerPassword">
                         </div>
 
 
                         <div class="form-group">
                             <label for="confirmPassword" class="col-form-label">Confirm Password:</label>
-                            <input type="" class="form-control" id="confirmPassword" name="confirm_password">
+                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password">
                         </div>
                     
                         <div class="row">
                             <div class="col pr-1">
-                                <button type="button" class="btn btn-primary btn-block" name="register">Register</button>
+                                <button type="submit" class="btn btn-primary btn-block" id="register" name="register">Register</button>
                             </div>
 
                             <div class="col pl-1">

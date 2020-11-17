@@ -1,16 +1,8 @@
 <?php
     require_once 'db.php';
     require_once 'helpers/functions.php';
+    require_once 'helpers/sessions.php';
     require_once 'indic-wp/word_processor.php';
-    session_start();
-
-    if(isset($_POST['login'])){
-        login($pdo);
-    }
-
-    // if(isset($_POST['register'])){
-    //     register();
-    // }
 ?>
 
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN''http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
@@ -45,12 +37,18 @@
             <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a href="index.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find') ? ' active' : '' ; ?>">Home</a>
+
+                <?php if(isLoggedIn()) : ?>
                     <a href="create_puzzle.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>">Create Puzzle</a>
-                    <!-- <a href="" class="nav-item nav-link" data-toggle="modal" data-target="#registerModal">Register</a> -->
-                    <a href="" class="nav-item nav-link" data-toggle="modal" data-target="#loginModal">Login</a>
+                    <a href="?logout" class="nav-item nav-link">Logout</a>
+                <?php else: ?>
+                    <a href="" class="nav-item nav-link" data-toggle="modal" data-target="#registerModal">Register</a>
+                    <a href="" id="loginBtn" class="nav-item nav-link" data-toggle="modal" data-target="#loginModal">Login</a>
+                <?php endif; ?>
                 </div>
 
                 <form id="search" class="form-inline" action="search.php" method="post">
+                    <span class="text-white mr-3"><?php echo (isLoggedIn()) ? 'Welcome, ' . $_SESSION['user_name'] : '' ; ?></span>
                     <input class="form-control mr-sm-2" type="search" name="query" placeholder="category, title, author, date created" onfocus="this.placeholder = ''" onblur="this.placeholder = 'category, title, author, date created'" size="33" aria-label="Search" value="<?php echo isset($_POST['query']) ? $_POST['query'] : ''; ?>">
                     <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
                 </form>
