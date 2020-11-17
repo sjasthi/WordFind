@@ -54,12 +54,13 @@
                     <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : ''; ?>>
                     <label class="custom-control-label" for="toggleLabels">Labels</label>
                 </div>
-
+                <?php if(isLoggedIn()):?>
                 <div class="custom-control custom-switch custom-control-inline mt-1">
                     <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
                     <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
                     <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
                 </div>
+                <?php endif; ?>
             </form>          
 
             <button type="button" id="copyMe" class="btn btn-outline-primary btn-sm">Copy Puzzle</button>  
@@ -91,6 +92,10 @@
 
     <div id="test"></div>
 <?php
-    addSolution($data);
+
+    if(isLoggedIn()){
+        addSolution($data);
+    }
+    
     include('includes/footer.php');
 ?>

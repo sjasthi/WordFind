@@ -2,6 +2,11 @@
 	min-height:100vh;
 }
 
+#loginAlert,
+#registerAlert {
+	display: none;
+}
+
 .col-auto {
 	overflow-x:auto;
 	overflow-y: hidden;

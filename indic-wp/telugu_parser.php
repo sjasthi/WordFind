@@ -11,6 +11,7 @@ function stripSpacesTelugu($log_chars) {
 	$build_i = 0;
 	for($i=0; $i < count($code_points); $i++) {
 		if(strcmp($log_chars[$i], " ") == 0) continue;
+
 		else {
 			$build[$build_i++] = $log_chars[$i];
 			if(isHalant(end($code_points[$i]) && $i + 1 < count($code_points))) {
@@ -22,6 +23,59 @@ function stripSpacesTelugu($log_chars) {
 	}
 	return $build;
 }
+
+
+
+function removeHiddenChar($logChars){
+
+	// echo '<pre>';
+	// print_r($logChars);
+	// echo '</pre>';
+
+	$codePoints = parseToCodePoints(implode($logChars));
+
+	// echo '<pre>';
+	// print_r($codePoints);
+	// echo '</pre>';
+
+	for($i=0; $i < count($codePoints); $i++) {
+		if(in_array('8204', $codePoints[$i])){
+			unset($codePoints[$i]);
+			                // print_r($codePoints);
+						// unset($point[$key]);
+		}
+	}
+
+	// $test = array_values(array_filter($codePoints));
+
+	// echo '<pre>';
+	// print_r($test);
+	// echo '</pre>';
+	
+
+	// foreach($codePoints as $point){
+	// 	// echo '<pre>';
+	// 	// print_r($point);
+	// 	// echo '</pre>';
+	// 	if(($key = array_search('8204', $point)) !== false) {
+    //                 // print_r($codePoints);
+	// 			unset($point[$key]);
+	// 		}
+			
+		
+	// }
+	
+
+	$logChars = array_values(array_filter($codePoints));
+	 
+
+	// echo '<pre>';
+	// print_r($codePoints);
+	// echo '</pre>';
+
+	return $logChars;
+}
+
 
 // $word expects a single utf-8 encoded word
 // returns a 2 dimensional array, representing the unicoded logical characters of the word

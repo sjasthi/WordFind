@@ -2,6 +2,8 @@
     $pageTitle = 'Word Find Puzzle Maker';
     include 'includes/header.php';
 
+    reguser();
+
     // display puzzle to user
     if(isset($_POST['generate_puzzle'])){
         $puzzle = generatePuzzle();
@@ -12,7 +14,13 @@
     // save generated puzzle to db
     if(isset($_POST['save_puzzle'])){
         savePuzzle($pdo, $_SESSION['data']);
+    } else {
+        preserveCache();
     }
+
+    // echo '<pre>';
+    // print_r($puzzle);
+    // echo '<pre>';
 ?>
 
 <div class="card mt-4">
@@ -88,12 +96,12 @@
 
                     <div class="form-group col-md-6">
                         <label for="height">Height</label>
-                        <input type="number" name="height" id="height" min="5" max="702" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '12' ?>" class="form-control">
+                        <input type="number" name="height" id="height" min="5" max="702" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '10' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="width">Width</label>
-                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '16' ?>" class="form-control">
+                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '10' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">

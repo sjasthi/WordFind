@@ -1,9 +1,80 @@
 <?php
 
-    function login(){
-        
+    function register($pdo){
+
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $data = [
+            'first_name' => trim($_POST['first_name']),
+            'last_name'  => trim($_POST['last_name']),
+            'email'      => trim($_POST['email']),
+            'password'   => trim($_POST['password'])
+        ];
+
+        // HASH Password
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+
+        $sql = 'SELECT email FROM users WHERE email = :email;';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['email' => $data['email']]);
+        $row = $stmt->fetch();
+            if(!$row){
+                $sql = 'INSERT INTO users(first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password);';
+
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    'first_name' => $data['first_name'],
+                    'last_name'  => $data['last_name'],
+                    'email'      => $data['email'],
+                     'password'  => $data['password']
+                ]);
+                exit('You are registered and can log in');
+            } else {
+                exit('Email already exists');
+            }
     }
 
+    function login($pdo){
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $data = [
+            'email'    => trim($_POST['email']),
+            'password' => trim($_POST['password'])
+        ];
+
+        $sql = 'SELECT * FROM users WHERE email = :email';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['email' => $data['email']]);
+        $user = $stmt->fetch();
+
+        if($user){
+            $hashedPassword = $user->password;
+            if(password_verify($data['password'], $hashedPassword)){
+                createUserSession($user);
+                exit('success');
+            } else {
+                exit('Wrong username or password');
+            }
+        } else {
+            exit('Wrong username or password');
+        }
+    }
+
+    function createUserSession($user){
+        $_SESSION['user_id'] = $user->user_id;
+        $_SESSION['user_email'] = $user->email;
+        $_SESSION['user_name'] = $user->first_name;
+        $_SESSION['role'] = $user->role;
+    }
+
+    function logout(){
+        unset($_SESSION['user_id']);
+        unset($_SESSION['user_email']);
+        unset($_SESSION['user_name']);
+        unset($_SESSION['role']);
+        session_destroy();
+        redirect('index');
+    }
 
     function getPuzzleById($pdo, $puzzleId){
         $sql = 'SELECT * from puzzles WHERE puzzle_id = :puzzle_id';
@@ -34,7 +105,7 @@
                 LEFT JOIN categories
                 ON categories.cat_id = puzzles.cat_id
                 INNER JOIN users
-                ON users.id = puzzles.author_id
+                ON users.user_id = puzzles.user_id
                 WHERE puzzles.cat_id = :category_id
         ";
             
@@ -95,7 +166,7 @@
                 INNER JOIN categories
                 ON puzzles.cat_id = categories.cat_id
                 INNER JOIN users
-                ON users.id = puzzles.author_id
+                ON users.user_id = puzzles.user_id
                 WHERE cat_name LIKE '%' :query '%'
                 OR title LIKE '%' :query '%'
                 OR users.first_name LIKE '%' :query '%'
@@ -119,7 +190,7 @@
             'cat_name'          => trim($_POST['cat_name']),
             'title'             => trim($_POST['title']),
             'description'       => trim($_POST['description']),
-            'author_id'         => 1, // will utilize logged in user in future iterations
+            'user_id'           => $_SESSION['user_id'],
             'language'          => $_POST['language'],
             'word_direction'    => $_POST['word_direction'],
             'height'            => $_POST['height'],
@@ -160,6 +231,8 @@
 
             // get logical chars of word
             $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
+
+            // need to remove 8204 code point
 
             for($x = 0; $x <= sizeof($logChars); $x++){
                 if (($key = array_search(' ', $logChars)) !== false) {
@@ -552,6 +625,17 @@
     // add extra letters //
     function addFoils($data){
         $fillerChars = $data['filler_char_types'];
+        // $inputLetters = $data['char_bank'];
+        
+
+        $inputLetters = call_user_func_array('array_merge', $data['char_bank']);
+
+        // $inputLetters = implode(",", $inputLetters);
+
+        // echo $inputLetters . '<br>';
+        
+
+        
         
         //add random dummy characters to board
         $language = $data['language'];
@@ -601,12 +685,14 @@
             //echo " second word " . $word[1] . "<br>";
         }
 
+        // print_r($Vowels);
         // foreach($any as $v){
         //     echo "the vowel is " .  $v . "<br>";
         // }
         // foreach($constants as $v){
         //     echo "the constant is " .  $v . "<br>";
         // }
+
 
         $any = array_merge($Vowels, $constants, $vowelMixers, $singleConstantBlends, $doubleConstantBlends, $tripleConstantBlends, $constantBlendsAndVowels);
         //foreach($any as $v){
@@ -650,6 +736,14 @@
                                     $english_char .= sprintf("\\u%'04s", dechex($num));
                                     $board[$row][$col] = json_decode('"' . $english_char . '"');
                                     $validChar = true;
+                                } elseif($fillerChars == "LFIW"){
+                                    
+                                    
+                                    $english_char .= sprintf("\\u%'04s", dechex($num));
+                                    $board[$row][$col] = json_decode('"' . $english_char . '"');
+                                    $validChar = true;
+                                    
+                                    
                                 } else {
                                     $english_char .= sprintf("\\u%'04s", dechex($num));
                                     $board[$row][$col] = json_decode('"' . $english_char . '"');
@@ -1087,24 +1181,25 @@
                         WHEN @cat_exists THEN @cat_exists
                         ELSE LAST_INSERT_ID()
                         END;
-        INSERT INTO puzzles(cat_id, title, description, author_id, language, word_direction, height, width, share_chars, filler_char_types, word_bank, board, solution_directions, answer_coordinates)
-        VALUES (@cat_id, :title, :description, :author_id, :language, :word_direction, :height, :width, :share_chars, :filler_char_types, :word_bank, :board, :solution_directions, :answer_coordinates);';
+        INSERT INTO puzzles(cat_id, title, description, user_id, language, word_direction, height, width, share_chars, filler_char_types, word_bank, board, solution_directions, answer_coordinates)
+        VALUES (@cat_id, :title, :description, :user_id, :language, :word_direction, :height, :width, :share_chars, :filler_char_types, :word_bank, :board, :solution_directions, :answer_coordinates);';
 
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(['cat_name' => $data['cat_name'],
-                           'title' => $data['title'],
-                     'description' => $data['description'],
-                       'author_id' => $data['author_id'],
-                        'language' => $data['language'],
-                  'word_direction' => $data['word_direction'],
-                          'height' => $data['height'],
-                           'width' => $data['width'],
-                     'share_chars' => $data['share_chars'],
-               'filler_char_types' => $data['filler_char_types'],
-                       'word_bank' => json_encode($data['word_bank']),
-                           'board' => json_encode($data['board']),
-             'solution_directions' => json_encode($data['solution_directions']),
-              'answer_coordinates' => json_encode($data['answer_coordinates'])
+        $stmt->execute([
+            'cat_name'            => $data['cat_name'],
+            'title'               => $data['title'],
+            'description'         => $data['description'],
+            'user_id'             => $data['user_id'],
+            'language'            => $data['language'],
+            'word_direction'      => $data['word_direction'],
+            'height'              => $data['height'],
+            'width'               => $data['width'],
+            'share_chars'         => $data['share_chars'],
+            'filler_char_types'   => $data['filler_char_types'],
+            'word_bank'           => json_encode($data['word_bank']),
+            'board'               => json_encode($data['board']),
+            'solution_directions' => json_encode($data['solution_directions']),
+            'answer_coordinates'  => json_encode($data['answer_coordinates'])
         ]);
 
         unset($_SESSION['data']);
@@ -1121,5 +1216,5 @@
             ];
         }
         
-        header("location:puzzle.php?puzzleId={$data['id']}" );
+        header("location:puzzle.php?puzzleId={$data['id']}");
     }
