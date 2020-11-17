@@ -37,6 +37,13 @@ class wordProcessor {
         if(is_string($word)) return $this->setWord($word);
     }
 
+// old style constructor is deprecated starting PHP 7.0
+// So, going with explicit construct function
+    function __construct($word) {
+        if(is_string($word)) return $this->setWord($word);
+    }
+
+
 // setter for the word
 // this also parses the word to logical characters
     function setWord($a_word) {

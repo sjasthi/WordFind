@@ -96,12 +96,12 @@
 
                     <div class="form-group col-md-6">
                         <label for="height">Height</label>
-                        <input type="number" name="height" id="height" min="5" max="702" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '10' ?>" class="form-control">
+                        <input type="number" name="height" id="height" min="5" max="702" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '12' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="width">Width</label>
-                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '10' ?>" class="form-control">
+                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '16' ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
@@ -125,8 +125,8 @@
 
                         <?php
                             $charTypes = [
-                                'Any'        => 'Any',
                                 'Consonants' => 'Consonants',
+                                'Any'        => 'Any',
                                 'Vowels'     => 'Vowels',
                                 'VM'         => 'Vowel Mixers',
                                 'SCB'        => 'Consonant Blends',
