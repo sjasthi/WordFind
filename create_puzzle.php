@@ -62,7 +62,7 @@
 
                         <?php
                         
-                            $languages = ['English', 'Telugu', 'Hindi', 'Gujarati', 'Malayalam'];
+                            $languages = ['Telugu', 'English', 'Hindi', 'Gujarati', 'Malayalam'];
                             foreach($languages as $language):
                         
                         ?>
