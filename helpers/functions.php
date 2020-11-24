@@ -77,7 +77,10 @@
     }
 
     function getPuzzleById($pdo, $puzzleId){
-        $sql = 'SELECT * from puzzles WHERE puzzle_id = :puzzle_id';
+        $sql = 'SELECT * FROM puzzles
+                INNER JOIN categories
+                ON categories.cat_id = puzzles.cat_id
+                WHERE puzzle_id = :puzzle_id';
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['puzzle_id' => $puzzleId]);
         return $stmt->fetchAll();
@@ -146,10 +149,70 @@
             $_COOKIE['solution_lines'] = $_POST['toggle_solution_lines'];
         }
 
-        if(isset($_POST['toggle_solution_circles'])){
-            setcookie('solution_circles', $_POST['toggle_solution_circles'], $expire);
-            $_COOKIE['solution_circles'] = $_POST['toggle_solution_circles'];
+        if(isset($_POST['toggle_word_list'])){
+            setcookie('word_list', $_POST['toggle_word_list'], $expire);
+            $_COOKIE['word_list'] = $_POST['toggle_word_list'];
         }
+    }
+
+    function updatePuzzle($pdo, $data, $puzzleId){
+
+         // Sanitize POST data
+         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $sql = 'INSERT INTO categories(cat_name)
+        SELECT * FROM (SELECT :cat_name) AS temp
+        WHERE NOT EXISTS (SELECT cat_name FROM categories WHERE cat_name = :cat_name);
+        SELECT *, @cat_exists:=cat_id FROM categories WHERE cat_name = :cat_name;
+                        SET @cat_id = CASE
+                        WHEN @cat_exists THEN @cat_exists
+                        ELSE LAST_INSERT_ID()
+                        END;
+
+        UPDATE puzzles
+        SET cat_id = @cat_id, title = :title, description = :description, language = :language, word_direction = :word_direction, height = :height, width = :width, share_chars = :share_chars, filler_char_types = :filler_char_types, word_bank = :word_bank, board = :board, solution_directions = :solution_directions, answer_coordinates = :answer_coordinates
+        WHERE puzzle_id = :puzzle_id;
+        DELETE categories
+        FROM categories
+        LEFT JOIN puzzles
+        ON categories.cat_id = puzzles.cat_id
+        WHERE puzzles.cat_id IS NULL; -- del category if category contains no other puzzles
+        ';
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'puzzle_id'           => $puzzleId,
+            'cat_name'            => trim($_POST['cat_name']),
+            'title'               => trim($_POST['title']),
+            'description'         => trim($_POST['description']),
+            'language'            => $data['language'],
+            'word_direction'      => $data['word_direction'],
+            'height'              => $data['height'],
+            'width'               => $data['width'],
+            'share_chars'         => $data['share_chars'],
+            'filler_char_types'   => $data['filler_char_types'],
+            'word_bank'           => json_encode($data['word_bank']),
+            'board'               => json_encode($data['board']),
+            'solution_directions' => json_encode($data['solution_directions']),
+            'answer_coordinates'  => json_encode($data['answer_coordinates'])
+        ]);
+
+        header("location:puzzle.php?puzzleId={$puzzleId}");
+
+    }
+
+    function deletePuzzle($pdo, $puzzleId){
+        $sql = 'DELETE FROM puzzles WHERE puzzle_id = :puzzle_id; -- del puzzle
+
+                DELETE categories
+                FROM categories
+                LEFT JOIN puzzles
+                ON categories.cat_id = puzzles.cat_id
+                WHERE puzzles.cat_id IS NULL; -- del category if category contains no other puzzles
+        ';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['puzzle_id' => $puzzleId]);
+        redirect('index');
     }
 
     function search($pdo){
@@ -193,17 +256,18 @@
             'user_id'           => $_SESSION['user_id'],
             'language'          => $_POST['language'],
             'word_direction'    => $_POST['word_direction'],
-            'height'            => $_POST['height'],
-            'width'             => $_POST['width'],
+            'height'            => trim($_POST['height']),
+            'width'             => trim($_POST['width']),
             'share_chars'       => $_POST['share_chars'],
             'filler_char_types' => $_POST['filler_char_types'],
             'word_bank'         => trim($_POST['word_bank']),
             'generate_board'    => TRUE
         ];
 
+        // replace commas with newline char
+        $data['word_bank'] = str_replace(",","\n",$data['word_bank']);
         // break string into array
         $wordBank = explode("\n", $data['word_bank']);
-        
 
         $rawWordBank = [];
 
@@ -231,20 +295,8 @@
 
             // get logical chars of word
             $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
-
-            // need to remove 8204 code point
-
-            for($x = 0; $x <= sizeof($logChars); $x++){
-                if (($key = array_search(' ', $logChars)) !== false) {
-                    unset($logChars[$key]);
-                }
-            }
-            $rawLogCharsBank = array_values(array_filter($logChars));
-
-            unset($rawWordBank);
-            unset($logChars);
-            $logChars = $rawLogCharsBank;
-            unset($rawLogCharsBank);
+            
+            $logChars = stripSpacesTelugu($logChars);
 
             array_push($charBank, $logChars);
 
@@ -288,6 +340,55 @@
         return $data;
         
     }
+
+// save generated puzzle to db
+function savePuzzle($pdo, $data){
+    $sql = 'INSERT INTO categories(cat_name)
+    SELECT * FROM (SELECT :cat_name) AS temp
+    WHERE NOT EXISTS (SELECT cat_name FROM categories WHERE cat_name = :cat_name); -- cat !exist
+    SELECT *, @cat_exists:=cat_id FROM categories WHERE cat_name = :cat_name; -- cat exists
+                    SET @cat_id = CASE
+                    WHEN @cat_exists THEN @cat_exists -- set id to existing cat
+                    ELSE LAST_INSERT_ID() -- new cat created, use last inserted id
+                    END;
+    INSERT INTO puzzles(cat_id, title, description, user_id, language, word_direction, height, width, share_chars, filler_char_types, word_bank, board, solution_directions, answer_coordinates)
+    VALUES (@cat_id, :title, :description, :user_id, :language, :word_direction, :height, :width, :share_chars, :filler_char_types, :word_bank, :board, :solution_directions, :answer_coordinates);';
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        'cat_name'            => $data['cat_name'],
+        'title'               => $data['title'],
+        'description'         => $data['description'],
+        'user_id'             => $data['user_id'],
+        'language'            => $data['language'],
+        'word_direction'      => $data['word_direction'],
+        'height'              => $data['height'],
+        'width'               => $data['width'],
+        'share_chars'         => $data['share_chars'],
+        'filler_char_types'   => $data['filler_char_types'],
+        'word_bank'           => json_encode($data['word_bank']),
+        'board'               => json_encode($data['board']),
+        'solution_directions' => json_encode($data['solution_directions']),
+        'answer_coordinates'  => json_encode($data['answer_coordinates'])
+    ]);
+
+    unset($_SESSION['data']);
+
+    $sql = 'SELECT max(puzzle_id) AS id FROM puzzles';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $id = $stmt->fetchAll();
+
+    foreach($id as $id){
+
+        $data = [
+            'id' => $id->id
+        ];
+    }
+    
+    header("location:puzzle.php?puzzleId={$data['id']}");
+}
+
 
     // init board w/ . . .
     function clearBoard($data){
@@ -1171,50 +1272,4 @@
         echo "</script>";
     }
 
-    // save generated puzzle to db
-    function savePuzzle($pdo, $data){
-        $sql = 'INSERT INTO categories(cat_name)
-        SELECT * FROM (SELECT :cat_name) AS temp
-        WHERE NOT EXISTS (SELECT cat_name FROM categories WHERE cat_name = :cat_name);
-        SELECT *, @cat_exists:=cat_id FROM categories WHERE cat_name = :cat_name;
-                        SET @cat_id = CASE
-                        WHEN @cat_exists THEN @cat_exists
-                        ELSE LAST_INSERT_ID()
-                        END;
-        INSERT INTO puzzles(cat_id, title, description, user_id, language, word_direction, height, width, share_chars, filler_char_types, word_bank, board, solution_directions, answer_coordinates)
-        VALUES (@cat_id, :title, :description, :user_id, :language, :word_direction, :height, :width, :share_chars, :filler_char_types, :word_bank, :board, :solution_directions, :answer_coordinates);';
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            'cat_name'            => $data['cat_name'],
-            'title'               => $data['title'],
-            'description'         => $data['description'],
-            'user_id'             => $data['user_id'],
-            'language'            => $data['language'],
-            'word_direction'      => $data['word_direction'],
-            'height'              => $data['height'],
-            'width'               => $data['width'],
-            'share_chars'         => $data['share_chars'],
-            'filler_char_types'   => $data['filler_char_types'],
-            'word_bank'           => json_encode($data['word_bank']),
-            'board'               => json_encode($data['board']),
-            'solution_directions' => json_encode($data['solution_directions']),
-            'answer_coordinates'  => json_encode($data['answer_coordinates'])
-        ]);
-
-        unset($_SESSION['data']);
-
-        $sql = 'SELECT max(puzzle_id) AS id FROM puzzles';
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-        $id = $stmt->fetchAll();
-
-        foreach($id as $id){
-
-            $data = [
-                'id' => $id->id
-            ];
-        }
-        
-        header("location:puzzle.php?puzzleId={$data['id']}");
-    }
+    
