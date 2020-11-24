@@ -55,40 +55,39 @@
         </div>
 
         <div class="card mt-4">
-            <div class="container card-header">
-                <div class="row">
-                    <div class="col-auto mr-auto">
-                        <div class="custom-control custom-switch custom-control-inline mt-1">
-                            <input type="hidden" name="toggle_borders" value="0">
-                            <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : ''; ?>>
-                            <label class="custom-control-label" for="toggleBorders">Borders</label>
-                        </div>
-
-                        <div class="custom-control custom-switch custom-control-inline mt-1">
-                            <input type="hidden" name="toggle_labels" value="0">
-                            <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : ''; ?>>
-                            <label class="custom-control-label" for="toggleLabels">Labels</label>
-                        </div>
-
-                        <?php if(isLoggedIn()):?>
-                        <div class="custom-control custom-switch custom-control-inline mt-1">
-                            <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
-                            <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
-                            <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
-                        </div>
-                        <?php endif; ?>
+            <div class="card-header mt-1 d-flex justify-content-between">
+                <!-- <div class="custom-control-inline"> -->
+                <div class="">
+                    <div class="custom-control custom-switch custom-control-inline mt-1">
+                        <input type="hidden" name="toggle_borders" value="0">
+                        <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : ''; ?>>
+                        <label class="custom-control-label" for="toggleBorders">Borders</label>
                     </div>
 
-                    <div class="col-auto mt-3 mt-md-0">
-                        <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?>
-                            <a href="edit_puzzle.php?id=<?php echo $puzzleId; ?>"><button type="button" id="edit" name = "edit_puzzle" class="btn btn-outline-primary btn-sm">Edit</button></a>
-                        <button type="submit" id="delete" name="delete_puzzle" class="btn btn-outline-primary btn-sm">Delete</button>
-                        <?php endif; ?>
-                        <button type="button" id="copyMe" class="btn btn-outline-primary btn-sm">Copy</button>
+                    <div class="custom-control custom-switch custom-control-inline mt-1">
+                        <input type="hidden" name="toggle_labels" value="0">
+                        <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : ''; ?>>
+                        <label class="custom-control-label" for="toggleLabels">Labels</label>
                     </div>
+                    <?php if(isLoggedIn()):?>
+                    <div class="custom-control custom-switch custom-control-inline mt-1">
+                        <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
+                        <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
+                        <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- want this to jump to new row on small screen? -->
+                <div>
+                    <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?>
+                        <a href="edit_puzzle.php?id=<?php echo $puzzleId; ?>"><button type="button" id="edit" name = "edit_puzzle" class="btn btn-outline-primary btn-sm">Edit</button></a>
+                    <button type="submit" id="delete" name="delete_puzzle" class="btn btn-outline-primary btn-sm">Delete</button>
+                    <?php endif; ?>
+                    <button type="button" id="copyMe" class="btn btn-outline-primary btn-sm">Copy</button>
                 </div>
             </div>
-
+            
             <div id="puzzleContainer" class="card-body d-flex justify-content-center">
                 <div class="col-auto">
                     <table id="puzzle">
