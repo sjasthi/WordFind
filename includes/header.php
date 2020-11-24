@@ -1,5 +1,5 @@
 <?php
-
+    ob_start();
     require_once 'db.php';
     require_once 'helpers/functions.php';
     require_once 'helpers/sessions.php';
