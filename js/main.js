@@ -182,7 +182,7 @@ $(function(){ // docuemnt ready
         }
     }
 
-    // // toggleSolutionLines on table
+    // toggleSolutionLines on table
     toggleSolutionLines();
     $("#toggleSolutionLines").click(toggleSolutionLines);
     function toggleSolutionLines(){
@@ -190,6 +190,19 @@ $(function(){ // docuemnt ready
             $('.solutionX').removeClass('d-none');
         } else {
             $('.solutionX').addClass('d-none');
+        }
+    }
+
+    // toggleWordList
+    toggleWordList();
+    $("#toggleWordList").click(toggleWordList);
+    function toggleWordList(){
+        if($('#toggleWordList').prop('checked')){
+            $('.word-list').removeClass('d-none');
+            $("label[for='toggleWordList']").text("Hide");
+        } else {
+            $('.word-list').addClass('d-none');
+            $("label[for='toggleWordList']").text("Show");
         }
     }
 
