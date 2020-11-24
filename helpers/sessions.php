@@ -1,4 +1,5 @@
 <?php
+    ob_start();
     session_start();
 
     // used if user clicks back btn after creating a puzzle

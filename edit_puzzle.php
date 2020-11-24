@@ -4,16 +4,49 @@
 
     reguser();
 
-    // display puzzle to user
+    $puzzleId = $_GET['id'];
+    $puzzle = getPuzzleById($pdo,$puzzleId);
+
+    foreach($puzzle as $puzzle){
+
+        $data = [
+            'puzzle_id'          => $puzzle->puzzle_id,
+            'cat_name'           => $puzzle->cat_name,
+            'title'              => $puzzle->title,
+            'user_id'            => $puzzle->user_id,
+            'description'        => $puzzle->description,
+            'language'           => $puzzle->language,
+            'word_direction'     => $puzzle->word_direction,
+            'height'             => $puzzle->height,
+            'width'              => $puzzle->width,
+            'filler_char_types'  => $puzzle->filler_char_types,
+            'share_chars'        => $puzzle->share_chars,
+            'word_bank'          => json_decode($puzzle->word_bank),
+            'board'              => json_decode($puzzle->board),
+            'answer_coordinates' => json_decode($puzzle->answer_coordinates),
+            'solution_directions'=> json_decode($puzzle->solution_directions),
+        ];
+    }
+    // get current board
+    $letters = getTableHeader($data);
+    $_SESSION['data'] = $data;
+    $_SESSION['data']['generate_board'] = TRUE;
+
+    // display board to user
     if(isset($_POST['generate_puzzle'])){
         $puzzle = generatePuzzle();
         $_SESSION['data'] = $puzzle;
-
+        $_SESSION['newData'] = $_SESSION['data'];
         $letters = getTableHeader($_SESSION['data']);
     }
-    // save generated puzzle to db
-    if(isset($_POST['save_puzzle'])){
-        savePuzzle($pdo, $_SESSION['data']);
+
+    // update board to db
+    if(isset($_POST['update_puzzle'])){
+        if(isset($_SESSION['newData'])){
+            updatePuzzle($pdo, $_SESSION['newData'], $puzzleId);
+        } else {
+            updatePuzzle($pdo, $_SESSION['data'], $puzzleId);
+        }
     } else {
         preserveCache();
     }
@@ -23,7 +56,7 @@
     <h5 class="card-header">Puzzle Configurations</h5>
 </div>
 
-<?php if(isset($puzzle['error'])): ?>
+<?php if(isset($_POST['generate_puzzle']) && isset($puzzle['error'])): ?>
 
     <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
         <strong>Oops!</strong> <?php echo $puzzle['error']; ?>
@@ -39,17 +72,17 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="category">Category</label>
-                        <input type="text" name="cat_name" id="category" class="form-control" value="<?php echo (isset($_POST['cat_name'])) ? $_POST['cat_name'] : 'Category' ?>">
+                        <input type="text" name="cat_name" id="category" class="form-control" value="<?php echo (isset($_POST['cat_name'])) ? $_POST['cat_name'] : $data['cat_name']; ?>">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="title">Title</label>
-                        <input type="text" name="title" id="title" class="form-control" value="<?php echo (isset($_POST['title'])) ? $_POST['title'] : 'Title' ?>">
+                        <input type="text" name="title" id="title" class="form-control" value="<?php echo (isset($_POST['title'])) ? $_POST['title'] : $data['title'] ?>">
                     </div>
 
                     <div class="form-group col-md-12">
                         <label for="description">Description</label>
-                        <input type="text" name="description" id="description" class="form-control" value="<?php echo (isset($_POST['description'])) ? $_POST['description'] : 'Description' ?>">
+                        <input type="text" name="description" id="description" class="form-control" value="<?php echo (isset($_POST['description'])) ? $_POST['description'] : $data['description'] ?>">
                     </div>
 
                     <div class="form-group col-md-6">
@@ -63,7 +96,17 @@
                         
                         ?>
 
-                        <option value="<?php echo $language; ?>" <?php echo isset($_POST['language']) && $_POST['language'] == $language ? 'selected ="selected"' : '' ?>><?php echo $language; ?></option>
+                        <option value="<?php echo $language; ?>" <?php
+                        
+                            if($data['language'] == $language && (!isset($_POST['language']))){
+                                echo 'selected';
+                            }
+
+                            if(isset($_POST['language']) && $_POST['language'] == $language){
+                                echo 'selected';
+                            }
+                        
+                        ?>><?php echo $language; ?></option>
 
                         <?php endforeach; // end languages ?>
                         </select>
@@ -84,20 +127,29 @@
                             foreach($directions as $key => $direction):
                         ?>
 
-                            <option value="<?php echo $key; ?>" <?php echo isset($_POST['word_direction']) && $_POST['word_direction'] == $key ? 'selected ="selected"' : '' ?>><?php echo $direction; ?></option>
+                            <option value="<?php echo $key; ?>" <?php
+                            
+                                if($data['word_direction'] == $key && (!isset($_POST['word_direction']))){
+                                    echo 'selected';
+                                }
 
+                                if(isset($_POST['word_direction']) && $_POST['word_direction'] == $key){
+                                    echo 'selected';
+                                }
+                                
+                            ?>><?php echo $direction; ?></option>
                             <?php endforeach; // end directions ?>
                         </select>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="height">Height</label>
-                        <input type="number" name="height" id="height" min="5" max="702" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : '10' ?>" class="form-control">
+                        <input type="number" name="height" id="height" min="5" max="702" value="<?php echo (isset($_POST['height'])) ? $_POST['height'] : $data['height'] ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="width">Width</label>
-                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : '10' ?>" class="form-control">
+                        <input type="number" name="width" id="width" min="5" max="702" value="<?php echo (isset($_POST['width'])) ? $_POST['width'] : $data['width'] ?>" class="form-control">
                     </div>
 
                     <div class="form-group col-md-6">
@@ -109,7 +161,17 @@
                             foreach($shareChars as $boolean):
                         ?>
 
-                            <option value="<?php echo $boolean; ?>" <?php echo isset($_POST['share_chars']) && $_POST['share_chars'] == $boolean ? 'selected ="selected"' : '' ?>><?php echo $boolean; ?></option>
+                            <option value="<?php echo $boolean; ?>" <?php
+                            
+                                if($data['share_chars'] == $boolean && (!isset($_POST['share_chars']))){
+                                    echo 'selected';
+                                }
+
+                                if(isset($_POST['share_chars']) && $_POST['share_chars'] == $boolean){
+                                    echo 'selected';
+                                }
+                            
+                            ?>><?php echo $boolean; ?></option>
 
                             <?php endforeach; // end shareChars ?>
                         </select>
@@ -135,7 +197,17 @@
                             foreach($charTypes as $key => $type):
                         ?>
 
-                            <option value="<?php echo $key; ?>" <?php echo isset($_POST['filler_char_types']) && $_POST['filler_char_types'] == $key ? 'selected ="selected"' : '' ?>><?php echo $type; ?></option>
+                            <option value="<?php echo $key; ?>" <?php
+                            
+                                if($data['filler_char_types'] == $key && (!isset($_POST['filler_char_types']))){
+                                    echo 'selected';
+                                }
+
+                                if(isset($_POST['filler_char_types']) && $_POST['filler_char_types'] == $key){
+                                    echo 'selected';
+                                }
+                            
+                            ?>><?php echo $type; ?></option>
 
                         <?php endforeach; // end charTypes ?>
                         </select>
@@ -146,7 +218,22 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="wordBank">Word Bank</label>
-                    <textarea class="form-control" rows="15" name="word_bank" id="wordBank"><?php echo (isset($_POST['word_bank'])) ? $_POST['word_bank'] : '' ?></textarea>
+                    <textarea class="form-control" rows="15" name="word_bank" id="wordBank"><?php
+                    
+                            if(isset($_POST['word_bank'])){
+                                echo $_POST['word_bank'];
+                            } else {
+                                foreach($data['word_bank'] as $word){
+                                    if($data['language'] == 'English'){
+                                        echo strtolower($word) . "\n";
+                                    } else {
+                                        echo $word . "\n";
+                                    }
+                                    
+                                }
+                            }
+                            
+                    ?></textarea>
                 </div>
             </div>
         </div>
@@ -154,13 +241,18 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="form-row">
-                    <?php if(isset($_POST['generate_puzzle']) && $_SESSION['data']['generate_board']): ?>
+                    <?php if($_SESSION['data']['generate_board']): ?>
+
+
+
+
+                    <?php // if(isset($_POST['generate_puzzle']) && $_SESSION['data']['generate_board']): ?>
                     <div class="form-group col-md-6">
                         <button class="btn btn-primary form-control" type="submit" name="generate_puzzle">Generate Puzzle</button>
                     </div>
 
                     <div class="form-group col-md-6">
-                        <button class="btn btn-success form-control" type="submit" name="save_puzzle">Save Puzzle</button>
+                        <button class="btn btn-success form-control" type="submit" name="update_puzzle">Update Puzzle</button>
                     </div>
                 </div> <!-- end form-row -->
             </div> <!-- end col -->
@@ -217,7 +309,7 @@
 
     <?php
         endif;
-        if(isset($_POST['generate_puzzle']) && $_SESSION['data']['generate_board']){
+        if($_SESSION['data']['generate_board']){
             addSolution($_SESSION['data']);
         }
 
