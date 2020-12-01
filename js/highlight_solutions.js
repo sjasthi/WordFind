@@ -28,7 +28,6 @@ function highlightSolution(beginCoord, direction, length, language){
     }
 
     if($('#toggleSolutionLines').prop('checked')){
-        console.log('checked');
         switch(direction){
             case 0:
                 $(answer).css("visibility", 'hidden');

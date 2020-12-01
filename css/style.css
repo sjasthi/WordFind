@@ -14,12 +14,23 @@
 
 table {
 	table-layout: fixed;
+	/* border-collapse: unset; */
+	/* border-spacing: 10px; */
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+	
 }
 
 table, th, tr, td {
-	padding: 5px;
+	padding: 10px;
 	font-size: 30px;
+	cursor: default;
 }
+
 
 td {
 	height: 50px;
@@ -39,4 +50,12 @@ td {
 	 top: 0;
 	 bottom: 0;
 	 border-width: 3px !important;
+ }
+
+ .strike {
+	 text-decoration: line-through;
+ }
+
+ #gameInstructions {
+	 display: none;
  }

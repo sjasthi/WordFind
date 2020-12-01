@@ -1,81 +1,5 @@
 <?php
 
-    function register($pdo){
-
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        $data = [
-            'first_name' => trim($_POST['first_name']),
-            'last_name'  => trim($_POST['last_name']),
-            'email'      => trim($_POST['email']),
-            'password'   => trim($_POST['password'])
-        ];
-
-        // HASH Password
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-
-        $sql = 'SELECT email FROM users WHERE email = :email;';
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['email' => $data['email']]);
-        $row = $stmt->fetch();
-            if(!$row){
-                $sql = 'INSERT INTO users(first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password);';
-
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([
-                    'first_name' => $data['first_name'],
-                    'last_name'  => $data['last_name'],
-                    'email'      => $data['email'],
-                     'password'  => $data['password']
-                ]);
-                exit('You are registered and can log in');
-            } else {
-                exit('Email already exists');
-            }
-    }
-
-    function login($pdo){
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        $data = [
-            'email'    => trim($_POST['email']),
-            'password' => trim($_POST['password'])
-        ];
-
-        $sql = 'SELECT * FROM users WHERE email = :email';
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['email' => $data['email']]);
-        $user = $stmt->fetch();
-
-        if($user){
-            $hashedPassword = $user->password;
-            if(password_verify($data['password'], $hashedPassword)){
-                createUserSession($user);
-                exit('success');
-            } else {
-                exit('Wrong username or password');
-            }
-        } else {
-            exit('Wrong username or password');
-        }
-    }
-
-    function createUserSession($user){
-        $_SESSION['user_id'] = $user->user_id;
-        $_SESSION['user_email'] = $user->email;
-        $_SESSION['user_name'] = $user->first_name;
-        $_SESSION['role'] = $user->role;
-    }
-
-    function logout(){
-        unset($_SESSION['user_id']);
-        unset($_SESSION['user_email']);
-        unset($_SESSION['user_name']);
-        unset($_SESSION['role']);
-        session_destroy();
-        redirect('index');
-    }
-
     function getPuzzleById($pdo, $puzzleId){
         $sql = 'SELECT * FROM puzzles
                 INNER JOIN categories
@@ -191,8 +115,8 @@
             'width'               => $data['width'],
             'share_chars'         => $data['share_chars'],
             'filler_char_types'   => $data['filler_char_types'],
-            'word_bank'           => json_encode($data['word_bank']),
-            'board'               => json_encode($data['board']),
+            'word_bank'           => json_encode($data['word_bank'], JSON_UNESCAPED_UNICODE),
+            'board'               => json_encode($data['board'], JSON_UNESCAPED_UNICODE),
             'solution_directions' => json_encode($data['solution_directions']),
             'answer_coordinates'  => json_encode($data['answer_coordinates'])
         ]);
@@ -366,8 +290,8 @@ function savePuzzle($pdo, $data){
         'width'               => $data['width'],
         'share_chars'         => $data['share_chars'],
         'filler_char_types'   => $data['filler_char_types'],
-        'word_bank'           => json_encode($data['word_bank']),
-        'board'               => json_encode($data['board']),
+        'word_bank'           => json_encode($data['word_bank'], JSON_UNESCAPED_UNICODE),
+        'board'               => json_encode($data['board'], JSON_UNESCAPED_UNICODE),
         'solution_directions' => json_encode($data['solution_directions']),
         'answer_coordinates'  => json_encode($data['answer_coordinates'])
     ]);
@@ -505,6 +429,8 @@ function savePuzzle($pdo, $data){
                 //row from 0 to board height
                 $newCol = rand(0, $data['width'] - 1 - sizeof($theWord));
                 $newRow = rand(0, $data['height'] - 1);
+                // $newRow = $newRow . 'r';
+                // echo $newRow;
                 for($i = 0; $i < sizeof($theWord); $i++){
                     //new character same row, initial column + $i
                     $boardLetter = $board[$newRow][$newCol + $i];
@@ -1271,5 +1197,3 @@ function savePuzzle($pdo, $data){
         echo "highlightSolution('" . $beginCoord ."', ". $direction .", ". $length . ",'" . $language ."');";
         echo "</script>";
     }
-
-    

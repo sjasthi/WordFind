@@ -207,9 +207,130 @@ $(function(){ // docuemnt ready
     }
 
     // screenshot puzzle and display to user -allows for copy/paste of img
-    $("#copyMe").click(function() {
+    $("#copyMe").click(function(){
         $("html, body").scrollTop(0);
-        html2canvas(document.querySelector("#puzzle"), {letterRendering:true, scrollX: -8, scrollY: -22}).then(canvas => canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})])));
+        html2canvas(document.querySelector("#puzzle"), {letterRendering:true, scrollX: 0, scrollY: -3}).then(canvas => canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})])));
     });
+
+    // gameMode
+    $("#play").click(toggleGameMode);
+    function toggleGameMode(){
+        if($(this).text() == "Play"){
+            // disable showSolution
+            $(".solutionX").remove();
+            $('#toggleSolutionLines').prop('checked', false).prop('disabled', true);
+            $('#edit').prop('disabled', true);
+            $('#delete').prop('disabled', true);
+            $('#copyMe').prop('disabled', true);
+            $('#play').removeClass('btn-outline-primary').addClass('btn-danger').text('STOP');
+            playGame();
+        } else {
+            location.reload();
+        }
+    }
+
+    function playGame(){
+        $('#gameInstructions').show();
+        $("#controlBtns").prepend("<span id=timer><span id=hr>00</span>:<span id=mins>00</span>:<span id=secs class=mr-2>00</span></span>");
+        $("#controls").removeAttr('id');
+        var timerVar = setInterval(countTimer, 1000);
+        // $("table").css('cursor', 'pointer').css('border-collapse', 'unset').css('border-spacing', '10px');
+        var selectedWord = "";
+        var reverse = "";
+        gameMode = true;
+
+
+        $(".char").click(function(){
+            if(gameMode){
+                $(this).addClass("bg-secondary");
+                selectedWord += $(this).html();
+            }
+        });
+
+        //  CLICK, HOVER, and RELEASE - DOESN'T WORK DIAGONALLY
+        // var mouseDown = false;
+        // $("table .char").mousedown(function(e){
+        //     mouseDown = true;
+        // }).mouseout(function(e){
+        //     if(mouseDown && gameMode){
+        //         var target = $(e.target);
+        //         target.addClass('bg-secondary');
+        //         selectedWord += target.html();
+        //     }
+        // });
+        
+        
+        // $("table").mouseup(function(){
+        //     mouseDown = false;
+        //     var reverseWord = reverseString(selectedWord);
+        //     if(wordBank.indexOf(selectedWord) >= 0 || wordBank.indexOf(reverseWord) >= 0){
+        //         $(".bg-secondary").removeClass("bg-secondary").addClass("bg-warning");
+        //         $("#words span").each(function(key, item){
+        //             if(selectedWord == $(item).html() || reverseWord == $(item).html()){
+        //                 $(this).addClass('strike');
+        //             }
+                
+        //             // game won
+        //             if($(".strike").length == wordBank.length){
+        //                 $("#words").empty().append("<span id=message>You win! You found every word!!</span>");
+        //                 $('#play').removeClass('btn-danger').addClass('btn-primary').text('Reset');
+        //                 clearInterval(timerVar);
+        //                 $("table").css('cursor', 'default');
+        //                 gameMode = false;
+        //             }                        
+        //         });
+        //     }
+        //     selectedWord = "";
+        //     $(".bg-secondary").removeClass("bg-secondary");
+        //  });
+
+
+
+         $(document).keydown(function(e){
+            if(e.keyCode == 16){ // shift
+                var reverseWord = reverseString(selectedWord);
+                if(wordBank.indexOf(selectedWord) >= 0 || wordBank.indexOf(reverseWord) >= 0){
+                    $(".bg-secondary").removeClass("bg-secondary").addClass("bg-warning");
+                    $("#words span").each(function(key, item){
+                        if(selectedWord == $(item).html() || reverseWord == $(item).html()){
+                            $(this).addClass('strike');
+                        }
+                    
+                        // game won
+                        if($(".strike").length == wordBank.length){
+                            $("#words").empty().append("<span id=message>You win! You found every word!!</span>");
+                            $('#play').removeClass('btn-danger').addClass('btn-primary').text('Reset');
+                            clearInterval(timerVar);
+                            $("table").css('cursor', 'default');
+                            gameMode = false;
+                        }                        
+                    });
+                }
+                selectedWord = "";
+                $(".bg-secondary").removeClass("bg-secondary");
+            }           
+        });
+}
+
+    var totalSeconds = 0;
+    function countTimer(){
+        ++totalSeconds;
+        var hour = Math.floor(totalSeconds / 3600);
+        var minute = Math.floor((totalSeconds - hour * 3600) / 60);
+        var seconds = totalSeconds - (hour*3600 + minute * 60);
+        if(hour < 10)
+            hour = "0" + hour;
+        if(minute < 10)
+            minute = "0" + minute;
+        if(seconds < 10)
+            seconds = "0" + seconds;
+        $("#hr").text(hour);
+        $("#mins").text(minute);
+        $("#secs").text(seconds);
+    }
+
+    function reverseString(str) {
+        return str.split("").reverse().join("");
+    }
 
 }); // end document ready

@@ -36,11 +36,19 @@
             <small><small><?php echo $data['description']; ?></small></small>
         </h5>
     </div>
+
+    <div id="gameInstructions" class="alert alert-primary alert-dismissible fade show mt-4" role="alert">
+        <strong>HOW TO</strong> Click each cell to begin selecting a word. Click shift to finish selecting the word.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
     <form id="controls" action="" method="post">
         <div class="card mt-4">
 
             <div class=" card-header">
-                <h6 class="custom-control-inline">Word List</h6>
+                <h6 class="custom-control-inline">Word Bank</h6>
 
                 <div class="custom-control custom-switch custom-control-inline mt-1">
                     <input type="hidden" name="toggle_word_list" value="0">
@@ -49,8 +57,12 @@
                 </div>
             </div>
 
-            <div class="card-body d-none word-list">
-                <p class="card-text"><?php echo implode(" &bull; ", $data['word_bank']); ?></p>
+            <div id="wordBank" class="card-body d-none word-list">
+                <!-- pass wordBank to js -->
+                <script>
+                    var wordBank = <?php echo json_encode($data['word_bank']); ?>
+                </script>
+                <p id="words" class="card-text"><span id="bank"><?php echo "<span>".implode('</span> &bull; <span>', $data['word_bank'])."</span>"; ?></span></p>
             </div>
         </div>
 
@@ -74,12 +86,15 @@
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
                             <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
+                            <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?> 
                             <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
+                            <?php endif; ?>
                         </div>
                         <?php endif; ?>
                     </div>
 
-                    <div class="col-auto mt-3 mt-md-0">
+                    <div id="controlBtns" class="col-auto mt-3 mt-md-0">
+                        <button type="button" id="play" class="btn btn-outline-primary btn-sm">Play</button>
                         <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?>
                             <a href="edit_puzzle.php?id=<?php echo $puzzleId; ?>"><button type="button" id="edit" name = "edit_puzzle" class="btn btn-outline-primary btn-sm">Edit</button></a>
                         <button type="submit" id="delete" name="delete_puzzle" class="btn btn-outline-primary btn-sm">Delete</button>
@@ -91,7 +106,7 @@
 
             <div id="puzzleContainer" class="card-body d-flex justify-content-center">
                 <div class="col-auto">
-                    <table id="puzzle">
+                    <table id="puzzle" class="test">
                         <tr class="bg-success">
                             <?php foreach($letters as $letter): ?>
                                 <td class="rowLabel d-none"><?php echo $letter ?></td>
@@ -103,7 +118,7 @@
                                 <td class="rowLabel bg-success d-none"><?php echo $row + 1; ?></td>
                                 <?php for($col = 0; $col < $data['width']; $col++): ?>
 
-                                    <td id="<?php echo 'r' . $row . 'c' . $col; ?>"><?php echo $data['board'][$row][$col]; ?></td>
+                                        <td class="char" id="<?php echo 'r' . $row . 'c' . $col; ?>"><?php echo $data['board'][$row][$col]; ?></td>
 
                                 <?php endfor;  // end col ?>
                             </tr>
