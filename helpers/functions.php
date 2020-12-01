@@ -505,6 +505,8 @@ function savePuzzle($pdo, $data){
                 //row from 0 to board height
                 $newCol = rand(0, $data['width'] - 1 - sizeof($theWord));
                 $newRow = rand(0, $data['height'] - 1);
+                // $newRow = $newRow . 'r';
+                // echo $newRow;
                 for($i = 0; $i < sizeof($theWord); $i++){
                     //new character same row, initial column + $i
                     $boardLetter = $board[$newRow][$newCol + $i];
@@ -1271,5 +1273,3 @@ function savePuzzle($pdo, $data){
         echo "highlightSolution('" . $beginCoord ."', ". $direction .", ". $length . ",'" . $language ."');";
         echo "</script>";
     }
-
-    
