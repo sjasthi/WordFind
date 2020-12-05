@@ -8,8 +8,6 @@
 function stripSpacesTelugu($log_chars) {
 	$code_points = parseToCodePoints(implode($log_chars));
 
-
-
 	$build = array();
 	$build_i = 0;
 	for($i=0; $i < count($code_points); $i++) {
@@ -26,27 +24,6 @@ function stripSpacesTelugu($log_chars) {
 	}
 	return $build;
 }
-
-
-
-function removeHiddenChar($logChars){
-
-	// మెక్ ‌డొనాల్డ్
-	// need to remove 8204 code point
-	$codePoints = parseToCodePoints(implode($logChars));
-
-	foreach ($codePoints as $point){
-		// if (in_array("8204", $point)){
-		// 	echo "Match found";
-		// }
-		foreach($point as $p){
-			str_replace($p, 0, $codePoints);
-		}
-	}
-	
-	return $codePoints;
-}
-
 
 // $word expects a single utf-8 encoded word
 // returns a 2 dimensional array, representing the unicoded logical characters of the word
@@ -103,6 +80,7 @@ function parseToCodePoints($word) {
 		$logical_chars[count($logical_chars)] = $ch_buffer;
 		$ch_buffer = array();
 	}
+
 	return $logical_chars;
 }
 
@@ -147,6 +125,13 @@ function explode_telugu($to_explode) {
 		}
 		$exploded[$e_pos++] = ord($to_explode[$pos++]);
 	}
+
+	// remove hidden char space 8204
+	if (($key = array_search('8204', $exploded)) !== false) {
+		unset($exploded[$key]);
+	}
+	$exploded = array_values(array_filter($exploded));
+	
 	return $exploded;
 }
 
@@ -180,6 +165,15 @@ function isTeluguNumber($ch) {
 // that false positive, and nothing harmful would happen if you did
 function isTelugu($ch) {
 	return ( $ch >= 0x0c00 && $ch <= 0x0c7f ) || ( $ch == 0x200c );
+}
+
+function is_blank_Telugu($hexVal){
+	$is_blank = false;
+	$blankArray = array("c00","c01","c02","c03","c0d","c11","c29","c34");
+	if(in_array($hexVal, $blankArray)){
+		return true;
+	}
+	return $is_blank;
 }
 
 

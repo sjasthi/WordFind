@@ -229,22 +229,48 @@ $(function(){ // docuemnt ready
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     function playGame(){
+
         $('#gameInstructions').show();
         $("#controlBtns").prepend("<span id=timer><span id=hr>00</span>:<span id=mins>00</span>:<span id=secs class=mr-2>00</span></span>");
         $("#controls").removeAttr('id');
         var timerVar = setInterval(countTimer, 1000);
         // $("table").css('cursor', 'pointer').css('border-collapse', 'unset').css('border-spacing', '10px');
-        var selectedWord = "";
-        var reverse = "";
+        var selectedWord = [];
         gameMode = true;
-
 
         $(".char").click(function(){
             if(gameMode){
                 $(this).addClass("bg-secondary");
-                selectedWord += $(this).html();
+                // selectedWord += $(this).html();
+                selectedWord.push($(this).html());
+                // console.log(selectedWord);
             }
+        });
+
+        // set data-word attr from charbank array w/ no spaces
+         $("#bank span").each(function(i){
+            $(this).attr('data-word', charBank[i]);
         });
 
         //  CLICK, HOVER, and RELEASE - DOESN'T WORK DIAGONALLY
@@ -284,20 +310,17 @@ $(function(){ // docuemnt ready
         //     $(".bg-secondary").removeClass("bg-secondary");
         //  });
 
-
-
          $(document).keydown(function(e){
             if(e.keyCode == 16){ // shift
-                var reverseWord = reverseString(selectedWord);
-                if(wordBank.indexOf(selectedWord) >= 0 || wordBank.indexOf(reverseWord) >= 0){
-                    $(".bg-secondary").removeClass("bg-secondary").addClass("bg-warning");
+                var selectedWordReversed = selectedWord.slice().reverse();
                     $("#words span").each(function(key, item){
-                        if(selectedWord == $(item).html() || reverseWord == $(item).html()){
+                        if(selectedWord == $(item).data('word') || selectedWordReversed == $(item).data('word')){
+                            $(".bg-secondary").removeClass("bg-secondary").addClass("bg-warning");
                             $(this).addClass('strike');
                         }
                     
                         // game won
-                        if($(".strike").length == wordBank.length){
+                        if($(".strike").length == charBank.length){
                             $("#words").empty().append("<span id=message>You win! You found every word!!</span>");
                             $('#play').removeClass('btn-danger').addClass('btn-primary').text('Reset');
                             clearInterval(timerVar);
@@ -305,8 +328,7 @@ $(function(){ // docuemnt ready
                             gameMode = false;
                         }                        
                     });
-                }
-                selectedWord = "";
+                selectedWord = [];
                 $(".bg-secondary").removeClass("bg-secondary");
             }           
         });
@@ -328,9 +350,5 @@ $(function(){ // docuemnt ready
         $("#mins").text(minute);
         $("#secs").text(seconds);
     }
-
-    function reverseString(str) {
-        return str.split("").reverse().join("");
-    }
-
+    
 }); // end document ready

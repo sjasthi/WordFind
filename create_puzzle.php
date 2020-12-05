@@ -8,7 +8,6 @@
     if(isset($_POST['generate_puzzle'])){
         $puzzle = generatePuzzle();
         $_SESSION['data'] = $puzzle;
-
         $letters = getTableHeader($_SESSION['data']);
     }
     // save generated puzzle to db
@@ -104,12 +103,15 @@
                         <label for="sharechars">Share Characters</label>
                         <select name="share_chars" id="sharechars" class="form-control">
                         <?php
-                            $shareChars = ['Yes', 'No'];
+                            $shareChars = [
+                                '1' => 'Yes',
+                                '0' => 'No'
+                            ];
 
-                            foreach($shareChars as $boolean):
+                            foreach($shareChars as $key => $boolean):
                         ?>
 
-                            <option value="<?php echo $boolean; ?>" <?php echo isset($_POST['share_chars']) && $_POST['share_chars'] == $boolean ? 'selected ="selected"' : '' ?>><?php echo $boolean; ?></option>
+                            <option value="<?php echo $key; ?>" <?php echo isset($_POST['share_chars']) && $_POST['share_chars'] == $key ? 'selected ="selected"' : '' ?>><?php echo $boolean; ?></option>
 
                             <?php endforeach; // end shareChars ?>
                         </select>

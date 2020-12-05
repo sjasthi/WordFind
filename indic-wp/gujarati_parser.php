@@ -162,5 +162,16 @@
     function isGujarati($ch) {
         return ( $ch >= 0x0a80 && $ch <= 0x0aff ) || ( $ch == 0x200c );
     }
+
+    function is_blank_Gujarati($hexVal){
+        {
+            $is_blank = false;
+            $blankArray = array("a8e","a92","aa9","ab1","ab4","ac6","aca","aba","abb","a84");
+            if(in_array($hexVal, $blankArray)){
+                return true;
+            }
+            return $is_blank;
+        }
+    }
 //}
 ?>
