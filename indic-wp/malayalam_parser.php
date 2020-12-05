@@ -179,5 +179,17 @@ function isMalayalamNumber($ch) {
 function isMalayalam($ch) {
     return ( $ch >= 0x0d00 && $ch <= 0x0d7f ) || ( $ch == 0x200c );
 }
-//}
+
+// Malayalam chars that do not show up should be excluded
+function is_blank_Malayalam($hexVal){
+    {
+        $is_blank = false;
+        $blankArray = array("d0d","d11","d3a","d04","d01","d2c","d29");
+        if(in_array($hexVal, $blankArray)){
+            return true;
+        }
+        return $is_blank;
+    }
+}
+
 ?>

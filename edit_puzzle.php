@@ -7,8 +7,8 @@
     $puzzleId = $_GET['id'];
     $puzzle = getPuzzleById($pdo,$puzzleId);
 
+    // get current board
     foreach($puzzle as $puzzle){
-
         $data = [
             'puzzle_id'          => $puzzle->puzzle_id,
             'cat_name'           => $puzzle->cat_name,
@@ -21,13 +21,14 @@
             'width'              => $puzzle->width,
             'filler_char_types'  => $puzzle->filler_char_types,
             'share_chars'        => $puzzle->share_chars,
+            'char_bank'          => json_decode($puzzle->char_bank),
             'word_bank'          => json_decode($puzzle->word_bank),
             'board'              => json_decode($puzzle->board),
             'answer_coordinates' => json_decode($puzzle->answer_coordinates),
             'solution_directions'=> json_decode($puzzle->solution_directions),
         ];
     }
-    // get current board
+    
     $letters = getTableHeader($data);
     $_SESSION['data'] = $data;
     $_SESSION['data']['generate_board'] = TRUE;
@@ -42,11 +43,33 @@
 
     // update board to db
     if(isset($_POST['update_puzzle'])){
+        // any inputs that would effect the board
         if(isset($_SESSION['newData'])){
-            updatePuzzle($pdo, $_SESSION['newData'], $puzzleId);
+            $_SESSION['newData']['language'] = $_SESSION['newData']['language'];
+            $_SESSION['newData']['word_direction'] = $_SESSION['newData']['word_direction'];
+            $_SESSION['newData']['height'] = $_SESSION['newData']['height'];
+            $_SESSION['newData']['width'] = $_SESSION['newData']['width'];
+            $_SESSION['newData']['share_chars'] = $_SESSION['newData']['share_chars'];
+            $_SESSION['newData']['filler_char_types'] = $_SESSION['newData']['filler_char_types'];
+            $_SESSION['newData']['char_bank'] = $_SESSION['newData']['char_bank'];
+            $_SESSION['newData']['word_bank'] = $_SESSION['newData']['word_bank'];
+            $_SESSION['newData']['board'] = $_SESSION['newData']['board'];
+            $_SESSION['newData']['answer_coordinates'] = $_SESSION['newData']['answer_coordinates'];
+            $_SESSION['newData']['solution_directions'] = $_SESSION['newData']['solution_directions'];
         } else {
-            updatePuzzle($pdo, $_SESSION['data'], $puzzleId);
+            $_SESSION['newData']['language'] = $_SESSION['data']['language'];
+            $_SESSION['newData']['word_direction'] = $_SESSION['data']['word_direction'];
+            $_SESSION['newData']['height'] = $_SESSION['data']['height'];
+            $_SESSION['newData']['width'] = $_SESSION['data']['width'];
+            $_SESSION['newData']['share_chars'] = $_SESSION['data']['share_chars'];
+            $_SESSION['newData']['filler_char_types'] = $_SESSION['data']['filler_char_types'];
+            $_SESSION['newData']['char_bank'] = $_SESSION['data']['char_bank'];
+            $_SESSION['newData']['word_bank'] = $_SESSION['data']['word_bank'];
+            $_SESSION['newData']['board'] = $_SESSION['data']['board'];
+            $_SESSION['newData']['answer_coordinates'] = $_SESSION['data']['answer_coordinates'];
+            $_SESSION['newData']['solution_directions'] = $_SESSION['data']['solution_directions'];
         }
+            updatePuzzle($pdo, $_SESSION['newData'], $puzzleId);
     } else {
         preserveCache();
     }
@@ -156,18 +179,21 @@
                         <label for="sharechars">Share Characters</label>
                         <select name="share_chars" id="sharechars" class="form-control">
                         <?php
-                            $shareChars = ['Yes', 'No'];
+                            $shareChars = [
+                                        '1' => 'Yes',
+                                        '0' => 'No'
+                            ];
 
-                            foreach($shareChars as $boolean):
+                            foreach($shareChars as $key => $boolean):
                         ?>
 
-                            <option value="<?php echo $boolean; ?>" <?php
+                            <option value="<?php echo $key; ?>" <?php
                             
-                                if($data['share_chars'] == $boolean && (!isset($_POST['share_chars']))){
+                                if($data['share_chars'] == $key && (!isset($_POST['share_chars']))){
                                     echo 'selected';
                                 }
 
-                                if(isset($_POST['share_chars']) && $_POST['share_chars'] == $boolean){
+                                if(isset($_POST['share_chars']) && $_POST['share_chars'] == $key){
                                     echo 'selected';
                                 }
                             

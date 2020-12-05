@@ -21,6 +21,7 @@
             'height'             => $puzzle->height,
             'width'              => $puzzle->width,
             'language'           => $puzzle->language,
+            'char_bank'          => json_decode($puzzle->char_bank),
             'word_bank'          => json_decode($puzzle->word_bank),
             'board'              => json_decode($puzzle->board),
             'answer_coordinates' => json_decode($puzzle->answer_coordinates),
@@ -58,11 +59,11 @@
             </div>
 
             <div id="wordBank" class="card-body d-none word-list">
-                <!-- pass wordBank to js -->
+                <!-- pass charBank to js -->
                 <script>
-                    var wordBank = <?php echo json_encode($data['word_bank']); ?>
+                    var charBank = <?php echo json_encode($data['char_bank']); ?>
                 </script>
-                <p id="words" class="card-text"><span id="bank"><?php echo "<span>".implode('</span> &bull; <span>', $data['word_bank'])."</span>"; ?></span></p>
+                <p id="words" class="card-text"><span id="bank" class="bank"><?php echo "<span>".implode('</span> &bull; <span>', $data['word_bank'])."</span>"; ?></span></p>
             </div>
         </div>
 
@@ -72,20 +73,20 @@
                     <div class="col-auto mr-auto">
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_borders" value="0">
-                            <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : ''; ?>>
+                            <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : 'checked'; ?>>
                             <label class="custom-control-label" for="toggleBorders">Borders</label>
                         </div>
 
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_labels" value="0">
-                            <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : ''; ?>>
+                            <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : 'checked'; ?>>
                             <label class="custom-control-label" for="toggleLabels">Labels</label>
                         </div>
 
                         <?php if(isLoggedIn()):?>
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
-                            <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
+                            <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : 'checked'; ?>>
                             <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?> 
                             <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
                             <?php endif; ?>
