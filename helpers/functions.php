@@ -274,6 +274,10 @@
 
 // save generated puzzle to db
 function savePuzzle($pdo, $data){
+
+     // Sanitize POST data
+     $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
     $sql = 'INSERT INTO categories(cat_name)
     SELECT * FROM (SELECT :cat_name) AS temp
     WHERE NOT EXISTS (SELECT cat_name FROM categories WHERE cat_name = :cat_name); -- cat !exist
@@ -287,9 +291,9 @@ function savePuzzle($pdo, $data){
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        'cat_name'            => $data['cat_name'],
-        'title'               => $data['title'],
-        'description'         => $data['description'],
+        'cat_name'            => trim($_POST['cat_name']),
+        'title'               => trim($_POST['title']),
+        'description'         => trim($_POST['description']),
         'user_id'             => $data['user_id'],
         'language'            => $data['language'],
         'word_direction'      => $data['word_direction'],

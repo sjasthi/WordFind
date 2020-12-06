@@ -39,7 +39,11 @@
     </div>
 
     <div id="gameInstructions" class="alert alert-primary alert-dismissible fade show mt-4" role="alert">
-        <strong>HOW TO</strong> Click each cell to begin selecting a word. Click shift to finish selecting the word.
+        <strong>Two Ways to Play</strong>
+        <p>1. Click each cell to begin selecting a word. Click shift to finish selecting the word.
+        <br>2. Click a cell, keep the mouse pressed down, moved across the word, mouse up to finish selecting the word.</p>
+
+
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button>
@@ -48,7 +52,7 @@
     <form id="controls" action="" method="post">
         <div class="card mt-4">
 
-            <div class=" card-header">
+            <div class="card-header">
                 <h6 class="custom-control-inline">Word Bank</h6>
 
                 <div class="custom-control custom-switch custom-control-inline mt-1">
@@ -73,20 +77,20 @@
                     <div class="col-auto mr-auto">
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_borders" value="0">
-                            <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : 'checked'; ?>>
+                            <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : ''; ?>>
                             <label class="custom-control-label" for="toggleBorders">Borders</label>
                         </div>
 
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_labels" value="0">
-                            <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : 'checked'; ?>>
+                            <input type="checkbox" class="custom-control-input" name="toggle_labels" id="toggleLabels" value="1"<?php echo (isset($_COOKIE['labels']) && $_COOKIE['labels'] == 1) ? ' checked ' : ''; ?>>
                             <label class="custom-control-label" for="toggleLabels">Labels</label>
                         </div>
 
                         <?php if(isLoggedIn()):?>
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
-                            <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : 'checked'; ?>>
+                            <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
                             <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?> 
                             <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
                             <?php endif; ?>
