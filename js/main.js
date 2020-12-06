@@ -229,110 +229,91 @@ $(function(){ // docuemnt ready
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     function playGame(){
+
+        // set data-word attr from charbank array w/ no spaces
+        $("#bank span").each(function(i){
+            $(this).attr('data-word', charBank[i]);
+        });
 
         $('#gameInstructions').show();
         $("#controlBtns").prepend("<span id=timer><span id=hr>00</span>:<span id=mins>00</span>:<span id=secs class=mr-2>00</span></span>");
         $("#controls").removeAttr('id');
+        $("#puzzle").css('user-select', 'none');
+        $("#puzzle").css('border-collapse', 'unset').css('border-spacing', '10px');
         var timerVar = setInterval(countTimer, 1000);
-        // $("table").css('cursor', 'pointer').css('border-collapse', 'unset').css('border-spacing', '10px');
         var selectedWord = [];
+        var mouseDown = false;
+        var mouseOver = false;
         gameMode = true;
 
-        $(".char").click(function(){
+        
+        $("#puzzle .char").mousedown(function(e){
+            e.preventDefault();
             if(gameMode){
-                $(this).addClass("bg-secondary");
-                // selectedWord += $(this).html();
+                $(this).addClass('bg-secondary');
                 selectedWord.push($(this).html());
-                // console.log(selectedWord);
+                mouseDown = true;
+            }
+            
+        }).mouseover(function(){
+            if(mouseDown){
+                mouseOver = true
+                $(this).addClass('bg-secondary');
+                selectedWord.push($(this).html());
+            }
+        }).mouseup(function(){
+            mouseDown = false;
+            if(mouseOver){
+               selectWord();
+            }
+        });
+        
+        $(document).keydown(function(e){
+            if(e.keyCode == 16){
+                selectWord();
+            }
+        });
+        
+        // user released mouse outside of puzzle
+        $(document).mouseup(function(e){
+            if(!$("#puzzle .char").is(e.target) && mouseDown){
+                selectWord();
             }
         });
 
-        // set data-word attr from charbank array w/ no spaces
-         $("#bank span").each(function(i){
-            $(this).attr('data-word', charBank[i]);
-        });
-
-        //  CLICK, HOVER, and RELEASE - DOESN'T WORK DIAGONALLY
-        // var mouseDown = false;
-        // $("table .char").mousedown(function(e){
-        //     mouseDown = true;
-        // }).mouseout(function(e){
-        //     if(mouseDown && gameMode){
-        //         var target = $(e.target);
-        //         target.addClass('bg-secondary');
-        //         selectedWord += target.html();
-        //     }
-        // });
-        
-        
-        // $("table").mouseup(function(){
-        //     mouseDown = false;
-        //     var reverseWord = reverseString(selectedWord);
-        //     if(wordBank.indexOf(selectedWord) >= 0 || wordBank.indexOf(reverseWord) >= 0){
-        //         $(".bg-secondary").removeClass("bg-secondary").addClass("bg-warning");
-        //         $("#words span").each(function(key, item){
-        //             if(selectedWord == $(item).html() || reverseWord == $(item).html()){
-        //                 $(this).addClass('strike');
-        //             }
-                
-        //             // game won
-        //             if($(".strike").length == wordBank.length){
-        //                 $("#words").empty().append("<span id=message>You win! You found every word!!</span>");
-        //                 $('#play').removeClass('btn-danger').addClass('btn-primary').text('Reset');
-        //                 clearInterval(timerVar);
-        //                 $("table").css('cursor', 'default');
-        //                 gameMode = false;
-        //             }                        
-        //         });
-        //     }
-        //     selectedWord = "";
-        //     $(".bg-secondary").removeClass("bg-secondary");
-        //  });
-
-         $(document).keydown(function(e){
-            if(e.keyCode == 16){ // shift
-                var selectedWordReversed = selectedWord.slice().reverse();
-                    $("#words span").each(function(key, item){
-                        if(selectedWord == $(item).data('word') || selectedWordReversed == $(item).data('word')){
-                            $(".bg-secondary").removeClass("bg-secondary").addClass("bg-warning");
-                            $(this).addClass('strike');
+        function selectWord(){
+            var selectedWordReversed = selectedWord.slice().reverse();
+            var counter = 0;
+                $("#words span").each(function(key, item){
+                    if(selectedWord == $(item).data('word') || selectedWordReversed == $(item).data('word')){
+                        $(".bg-secondary").removeClass("bg-secondary").addClass("bg-warning");
+                        $(this).addClass('strike');
+                        if($(".strike").length != charBank.length){
+                            new Audio('audio/correct.mp3').play();
+                            mouseDown = false;
+                            counter++
                         }
-                    
-                        // game won
-                        if($(".strike").length == charBank.length){
-                            $("#words").empty().append("<span id=message>You win! You found every word!!</span>");
-                            $('#play').removeClass('btn-danger').addClass('btn-primary').text('Reset');
-                            clearInterval(timerVar);
-                            $("table").css('cursor', 'default');
-                            gameMode = false;
-                        }                        
-                    });
-                selectedWord = [];
-                $(".bg-secondary").removeClass("bg-secondary");
-            }           
-        });
-}
+                    }
+                
+                    // game won
+                    if($(".strike").length == charBank.length){
+                        $("#words").empty().append("<span id=message>You win! You found every word!!</span>");
+                        $('#play').removeClass('btn-danger').addClass('btn-primary').text('Reset');
+                        clearInterval(timerVar);
+                        $("table").css('cursor', 'default');
+                        new Audio('audio/win.mp3').play();
+                        gameMode = false;
+                    }                        
+                });
+                
+            if(counter != 1 && gameMode){
+                new Audio('audio/wrong.mp3').play();
+            }
+            selectedWord = [];
+            mouseOver = false;
+            $(".bg-secondary").removeClass("bg-secondary");
+        }
 
     var totalSeconds = 0;
     function countTimer(){
@@ -350,5 +331,6 @@ $(function(){ // docuemnt ready
         $("#mins").text(minute);
         $("#secs").text(seconds);
     }
-    
+}
+
 }); // end document ready
