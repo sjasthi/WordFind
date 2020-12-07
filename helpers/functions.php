@@ -270,7 +270,6 @@
 
                 addFoils($data);
                 
-
                 // set legalBoard to data
                 global $board, $solutionDirections, $answerCoords;
                 $data['board'] = $board;
@@ -335,7 +334,6 @@ function savePuzzle($pdo, $data){
     
     header("location:puzzle.php?puzzleId={$data['id']}");
 }
-
 
     // init board w/ . . .
     function clearBoard($data){

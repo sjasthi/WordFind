@@ -1,0 +1,8 @@
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined index: puzzleId in C:\xampp\htdocs\WordFind\puzzle.php on line 6
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 32
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 36
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 37
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 68
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 70
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Warning:  implode(): Invalid arguments passed in C:\xampp\htdocs\WordFind\puzzle.php on line 70
+[07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 121
