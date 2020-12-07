@@ -223,13 +223,24 @@
             $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
             
             // remove spaces
-            $logChars = stripSpacesTelugu($logChars);
+            if($data['language'] == 'Telegu'){
+                $logChars = stripSpacesTelugu($logChars);
+            }
+
+            if($data['language'] == 'Hindi'){
+                $logChars = stripSpacesHindi($logChars);
+            }
+
+            if($data['language'] == 'Gujarati'){
+                $logChars = stripSpacesGujarati($logChars);
+            }
+
+            if($data['language'] == 'Malayalam'){
+                $logChars = stripSpacesMalayalam($logChars);
+            }
 
             array_push($charBank, $logChars);
-
-            // echo '<pre>';
-            // print_r($charBank);
-            // echo '</pre>';
+            
 
             if(sizeof($logChars) == 0){
                 $data['error'] = 'Might want to check the word bank!';
