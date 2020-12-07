@@ -498,85 +498,79 @@ function parseList($data){
     return $data;
 } // end parseList
 
-// add extra letters //
+// add extra letters to wordFind board //
 function addFoils($data){
+
+    // filler character types
     $fillerChars = $data['filler_char_types'];
-    // $inputLetters = $data['char_bank'];
+    $any = [];
+    $vowels = [];
+    $constants = [];
+    $vowelMixers = [];
+    $singleConstantBlends = [];
+    $doubleConstantBlends = [];
+    $tripleConstantBlends = [];
+    $constantBlendsAndVowels = [];
     
+    // remove double instances of letters
+    $inputLetters =  call_user_func_array('array_merge', $data['char_bank']);
+    $rawInputLetters = [];
+    foreach($inputLetters as $letter){
+        if(!in_array($letter, $rawInputLetters)){
+            array_push($rawInputLetters, $letter);
+        }
+    }
+    $inputLetters = $rawInputLetters;
 
-    $inputLetters = call_user_func_array('array_merge', $data['char_bank']);
-
-    // $inputLetters = implode(",", $inputLetters);
-
-    // echo $inputLetters . '<br>';
-    
-
-    
-    
     //add random dummy characters to board
     $language = $data['language'];
     global $board;
     $myfile = fopen("indic-wp/telugu_seed.txt", "r") or die("Unable to open file!");
-    // echo fread($myfile,filesize("indic-wp/telugu_seed.txt"));
-    $lines = array();
-    $word = array();
-    $Vowels = array();
-    $constants = array();
-    $vowelMixers = array();
-    $singleConstantBlends = array();
-    $doubleConstantBlends = array();
-    $tripleConstantBlends = array();
-    $constantBlendsAndVowels = array();
-    $any = array();
 
+    $lines = [];
+    $word = [];
     while (!feof($myfile)){
         $line = fgets($myfile);
-        //$lines = explode("\n", $line);
         $lines[] = $line;
-        //echo "first word: " . $lines[0] . " second word: " . $lines[1]  . "<br>";
-        //array_push($word, preg_split('/ +/', $line));
-        //echo "I like " . $lines[0] . "<br>";
-        //echo "I words " . $word[0] . "<br>";
     }
-    //print_r($word);
+
     foreach($lines as $w){
         $word = explode(" ",trim($w));
-        //echo "the word " . $w. "<br>";
-        //echo " first words " . $word[0] . "<br>";
-        if(in_array("VOWELS", $word)){
-            $Vowels[]=$word[1];
-        } elseif(in_array("CONSONANTS", $word)){
-            $constants[]=$word[1];
+        if(in_array("CONSONANTS", $word)){
+            array_push($constants, $word[1]);
+        } elseif(in_array("VOWELS", $word)){
+            array_push($vowels, $word[1]);
         } elseif(in_array("VOWELMIXERS", $word)){
-            $vowelMixers[]=$word[1];
+            array_push($vowelMixers, $word[1]);
         } elseif(in_array("SINGLECONSONANTBLENDS", $word)){
-            $singleConstantBlends[]=$word[1];
+            array_push($singleConstantBlends, $word[1]);
         } elseif(in_array("DOUBLECONSONANTBLENDS", $word)){
-            $doubleConstantBlends[]=$word[1];
+            array_push($doubleConstantBlends, $word[1]);
         } elseif(in_array("TRIPLECONSONANTBLENDS", $word)){
-            $tripleConstantBlends[]=$word[1];
-        } elseif(in_array("CONSONANTBLENDSANDVowels", $word)){
-            $constantBlendsAndVowels[]=$word[1];
+            array_push($tripleConstantBlends, $word[1]);
+        } elseif(in_array("CONSONANTBLENDSANDVOWELS", $word)){
+            array_push($constantBlendsAndVowels, $word[1]);
         }
-        //echo " second word " . $word[1] . "<br>";
     }
 
-    // print_r($Vowels);
-    // foreach($any as $v){
-    //     echo "the vowel is " .  $v . "<br>";
-    // }
-    // foreach($constants as $v){
-    //     echo "the constant is " .  $v . "<br>";
-    // }
+    // get N random chars back from each fillerCharType
+    $n = 15;
+    shuffle($constants);
+    shuffle($vowels);
+    shuffle($vowelMixers);
+    shuffle($singleConstantBlends);
+    shuffle($doubleConstantBlends);
+    shuffle($tripleConstantBlends);
+    shuffle($constantBlendsAndVowels);
+    $any = array_merge(array_slice($constants, 0, $n),
+           array_slice($vowels, 0, $n), 
+           array_slice($vowelMixers, 0, $n), 
+           array_slice($singleConstantBlends, 0, $n), 
+           array_slice($doubleConstantBlends, 0, $n), 
+           array_slice($tripleConstantBlends, 0, $n), 
+           array_slice($constantBlendsAndVowels, 0, $n)
+    );
 
-
-    $any = array_merge($Vowels, $constants, $vowelMixers, $singleConstantBlends, $doubleConstantBlends, $tripleConstantBlends, $constantBlendsAndVowels);
-    //foreach($any as $v){
-    //        echo "the constant is " .  $v . "<br>";
-    //}
-    //echo "I like " . $Vowels[0] . ", " . $Vowels[1] . " and " . $Vowels[2] . ".";
-    //echo $fillerChars;
-    //echo $fillerChars1;
     fclose($myfile);
 
     switch($language){
@@ -613,13 +607,10 @@ function addFoils($data){
                                 $board[$row][$col] = json_decode('"' . $english_char . '"');
                                 $validChar = true;
                             } elseif($fillerChars == "LFIW"){
-                                
-                                
-                                $english_char .= sprintf("\\u%'04s", dechex($num));
-                                $board[$row][$col] = json_decode('"' . $english_char . '"');
+                                $k = array_rand($inputLetters);
+                                $english_char .= $inputLetters[$k];
+                                $board[$row][$col] = $english_char;
                                 $validChar = true;
-                                
-                                
                             } else {
                                 $english_char .= sprintf("\\u%'04s", dechex($num));
                                 $board[$row][$col] = json_decode('"' . $english_char . '"');
@@ -647,57 +638,41 @@ function addFoils($data){
                             if(is_blank_Telugu($hexcode)){
                                 continue;
                             } elseif($fillerChars == "Consonants"){
-                                // if(isCharVowel($hexcode,$language)){
-                                //    continue;
-                                // }
                                 $k = array_rand($constants);
                                 $telugu_char .= $constants[$k];
                                 $board[$row][$col] = $telugu_char;
                                 $validChar = true;
                             } elseif($fillerChars == "Vowels"){
-                                // if(isCharConsonant($hexcode,$language)){
-                                //     continue;
-                                // }
-                                $k = array_rand($Vowels);
-                                $telugu_char .= $Vowels[$k];
+                                $k = array_rand($vowels);
+                                $telugu_char .= $vowels[$k];
                                 $board[$row][$col] = $telugu_char;
                                 $validChar = true;
                             } elseif($fillerChars == "SCB"){
-                                // $telugu_char .= sprintf("\\u%'04s", dechex($num));
-                                // $board[$row][$col] = json_decode('"' . $telugu_char . '"');
-                                // $validChar = true;
                                 $k = array_rand($singleConstantBlends);
                                 $telugu_char .= $singleConstantBlends[$k];
                                 $board[$row][$col] = "  " . $telugu_char . "  ";
                                 $validChar = true;
                             } elseif($fillerChars == "DCB"){
-                                // $telugu_char .= sprintf("\\u%'04s", dechex($num));
-                                // $board[$row][$col] = json_decode('"' . $telugu_char . '"');
-                                // $validChar = true;
                                 $k = array_rand($doubleConstantBlends);
                                 $telugu_char .= $doubleConstantBlends[$k];
                                 $board[$row][$col] = "  " . $telugu_char . "  ";
                                 $validChar = true;
                             } elseif($fillerChars == "TCB"){
-                                // $telugu_char .= sprintf("\\u%'04s", dechex($num));
-                                // $board[$row][$col] = json_decode('"' . $telugu_char . '"');
-                                // $validChar = true;
                                 $k = array_rand($tripleConstantBlends);
                                 $telugu_char .= $tripleConstantBlends[$k];
                                 $board[$row][$col] = "  " . $telugu_char . "  ";
                                 $validChar = true;
                             } elseif($fillerChars == "CDV"){
-                                // $telugu_char .= sprintf("\\u%'04s", dechex($num));
-                                // $board[$row][$col] = json_decode('"' . $telugu_char . '"');
-                                // $validChar = true;
                                 $k = array_rand($constantBlendsAndVowels);
                                 $telugu_char .= $constantBlendsAndVowels[$k];
                                 $board[$row][$col] = "  " . $telugu_char . "  ";
                                 $validChar = true;
+                            } elseif($fillerChars == "LFIW"){
+                                $k = array_rand($inputLetters);
+                                $telugu_char .= $inputLetters[$k];
+                                $board[$row][$col] = $telugu_char;
+                                $validChar = true;
                             } else {
-                                // $telugu_char .= sprintf("\\u%'04s", dechex($num));
-                                // $board[$row][$col] = json_decode('"' . $telugu_char . '"');
-                                // $validChar = true;
                                 $k = array_rand($any);
                                 $telugu_char .= $any[$k];
                                 $board[$row][$col] = "  " . $telugu_char . "  ";
@@ -736,6 +711,11 @@ function addFoils($data){
                                 $hindi_char .= sprintf("\\u%'04s", dechex($num));
                                 $board[$row][$col] = json_decode('"' . $hindi_char . '"');
                                 $validChar = true;
+                            } elseif($fillerChars == "LFIW"){
+                                $k = array_rand($inputLetters);
+                                $hindi_char .= $inputLetters[$k];
+                                $board[$row][$col] = $hindi_char;
+                                $validChar = true;
                             } else {
                                 $hindi_char .= sprintf("\\u%'04s", dechex($num));
                                 $board[$row][$col] = json_decode('"' . $hindi_char . '"');
@@ -751,7 +731,6 @@ function addFoils($data){
             for ($row = 0; $row < $data["height"]; $row++){
                 for ($col = 0; $col < $data["width"]; $col++){
                     if ($board[$row][$col] == "."){
-                        //Make sure the character is valid
                         $validChar = false;
                         while(!$validChar){
                             $gujarati_char = "";
@@ -760,8 +739,6 @@ function addFoils($data){
                             $num = rand(hexdec($startHex), hexdec($endHex));
                             $hexcode = dechex($num);
                             $number = (20 * $row) + $col;
-                            //echo $number;
-                            //var_dump($hexcode);
                             if(is_blank_Gujarati($hexcode)){
                                 continue;
                             } elseif($fillerChars == "Consonants"){
@@ -778,6 +755,11 @@ function addFoils($data){
                                 $gujarati_char  .= sprintf("\\u%'04s", dechex($num));
                                 $board[$row][$col] = json_decode('"' . $gujarati_char  . '"');
                                 $validChar = true;
+                            } elseif($fillerChars == "LFIW"){
+                                $k = array_rand($inputLetters);
+                                $gujarati_char .= $inputLetters[$k];
+                                $board[$row][$col] = $gujarati_char;
+                                $validChar = true;
                             } else {
                                 $gujarati_char  .= sprintf("\\u%'04s", dechex($num));
                             $board[$row][$col] = json_decode('"' . $gujarati_char  . '"');
@@ -793,7 +775,6 @@ function addFoils($data){
             for ($row = 0; $row < $data["height"]; $row++){
                 for($col = 0; $col < $data["width"]; $col++){
                     if($board[$row][$col] == "."){
-                        //Make sure the character is valid
                         $validChar = false;
                         while(!$validChar){
                             $malay_char = "";
@@ -801,9 +782,6 @@ function addFoils($data){
                             $endHex = "0x0d3a";
                             $num = rand(hexdec($startHex), hexdec($endHex));
                             $hexcode = dechex($num);
-                            //$number = (20 * $row) + $col;
-                            //echo $number;
-                            //var_dump($hexcode);
                             if(is_blank_Malayalam($hexcode)){
                                 continue;
                             } elseif($fillerChars == "Consonants"){
@@ -820,6 +798,11 @@ function addFoils($data){
                                 $malay_char .= sprintf("\\u%'04s", dechex($num));
                                 $board[$row][$col] = json_decode('"' . $malay_char. '"');
                                 $validChar = true;
+                            } elseif($fillerChars == "LFIW"){
+                                $k = array_rand($inputLetters);
+                                $malay_char .= $inputLetters[$k];
+                                $board[$row][$col] = $malay_char;
+                                $validChar = true;
                             } else {
                                 $malay_char .= sprintf("\\u%'04s", dechex($num));
                                 $board[$row][$col] = json_decode('"' . $malay_char. '"');
@@ -832,6 +815,5 @@ function addFoils($data){
             break;
     }
 } // end addFoils
-
 
 ?>
