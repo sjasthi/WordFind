@@ -74,7 +74,7 @@
         <div class="card mt-4">
             <div class="container card-header">
                 <div class="row">
-                    <div class="col-auto mr-auto">
+                    <div class="col-sm col-auto mr-auto">
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_borders" value="0">
                             <input type="checkbox" class="custom-control-input" name="toggle_borders" id="toggleBorders" value="1"<?php echo (isset($_COOKIE['borders']) && $_COOKIE['borders'] == 1) ? ' checked ' : ''; ?>>
@@ -111,16 +111,16 @@
 
             <div id="puzzleContainer" class="card-body d-flex justify-content-center">
                 <div class="col-auto">
-                    <table id="puzzle" class="test">
+                    <table id="puzzle">
                         <tr class="bg-success">
                             <?php foreach($letters as $letter): ?>
-                                <td class="rowLabel d-none"><?php echo $letter ?></td>
+                                <td class="row-label d-none"><?php echo $letter ?></td>
                             <?php endforeach; ?>
                         </tr>
                         
                         <?php for($row = 0; $row < $data['height']; $row++): ?>
                             <tr>
-                                <td class="rowLabel bg-success d-none"><?php echo $row + 1; ?></td>
+                                <td class="row-label bg-success d-none"><?php echo $row + 1; ?></td>
                                 <?php for($col = 0; $col < $data['width']; $col++): ?>
 
                                         <td class="char" id="<?php echo 'r' . $row . 'c' . $col; ?>"><?php echo $data['board'][$row][$col]; ?></td>

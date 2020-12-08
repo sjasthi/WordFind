@@ -16,9 +16,8 @@ table {
 	table-layout: fixed;	
 }
 
-table, th, tr, td {
+table, tr, td {
 	padding: 10px;
-	font-size: 30px;
 	cursor: default;
 }
 
@@ -27,6 +26,7 @@ td {
 	min-width: 50px;
 	padding: 0;
 	text-align: center;
+	font-size: 30px;
 	word-wrap: normal;
 }
 

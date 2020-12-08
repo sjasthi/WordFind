@@ -11,14 +11,15 @@
 - Puzzle solutions restricted to registered users
 - Search puzzles on metadata
 - Copy / Paste puzzles into other programs using html2canvas
+- Play puzzles
 
 ##  Supported Languages. 
 
 - English
 - Telugu
-- Hindi
-- Malayalam
-- Gujarathi
+- Hindi (WIP)
+- Malayalam (WIP)
+- Gujarathi (WIP)
 
 ## Login Credentials
 
@@ -27,7 +28,6 @@
 
 ## Future Enhancements
 
-- Users can play the puzzles
 - batch processing - creation of 100 puzzles to PDF
 - Integration with Google Analytics
 - Pagination for index, categories, and search pages

@@ -307,13 +307,13 @@
             <table>
                 <tr>
                     <?php foreach($letters as $letter): ?>
-                        <td class="rowLabel bg-success d-none"><?php echo $letter ?></td>
+                        <td class="row-label bg-success d-none"><?php echo $letter ?></td>
                     <?php endforeach; ?>
                 </tr>
                 
                 <?php for($row = 0; $row < $_SESSION['data']['height']; $row++): ?>
                     <tr>
-                        <td class="rowLabel bg-success d-none"><?php echo $row + 1; ?></td>
+                        <td class="row-label bg-success d-none"><?php echo $row + 1; ?></td>
                     <?php for($col = 0; $col < $_SESSION['data']['width']; $col++): ?>
                         <td id="<?php echo 'r' . $row . 'c' . $col; ?>"><?php echo $_SESSION['data']['board'][$row][$col]; ?></td>       
                     <?php endfor;  // end col ?>

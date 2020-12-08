@@ -176,9 +176,9 @@ $(function(){ // docuemnt ready
     $("#toggleLabels").click(toggleLables);
     function toggleLables(){
         if($('#toggleLabels').prop('checked')){
-            $('.rowLabel').removeClass('d-none');
+            $('.row-label').removeClass('d-none');
         } else {
-            $('.rowLabel').addClass('d-none');
+            $('.row-label').addClass('d-none');
         }
     }
 
@@ -236,6 +236,11 @@ $(function(){ // docuemnt ready
             $(this).attr('data-word', charBank[i]);
         });
 
+        var colNumber = $('.bg-success .row-label').length - 1;
+        if(colNumber >= 16){
+            $("#puzzle td").css('height', '39px').css('min-width', '39px').css('font-size', '22px');
+        }
+        
         $('#gameInstructions').show();
         $("#controlBtns").prepend("<span id=timer><span id=hr>00</span>:<span id=mins>00</span>:<span id=secs class=mr-2>00</span></span>");
         $("#controls").removeAttr('id');
@@ -247,7 +252,6 @@ $(function(){ // docuemnt ready
         var mouseOver = false;
         gameMode = true;
 
-        
         $("#puzzle .char").mousedown(function(e){
             e.preventDefault();
             if(gameMode){
