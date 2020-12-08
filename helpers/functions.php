@@ -223,20 +223,14 @@
             $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
             
             // remove spaces
-            if($data['language'] == 'Telegu'){
-                $logChars = stripSpacesTelugu($logChars);
-            }
-
-            if($data['language'] == 'Hindi'){
+           if($data['language'] == 'Hindi'){
                 $logChars = stripSpacesHindi($logChars);
-            }
-
-            if($data['language'] == 'Gujarati'){
+            } else if($data['language'] == 'Gujarati'){
                 $logChars = stripSpacesGujarati($logChars);
-            }
-
-            if($data['language'] == 'Malayalam'){
+            } else if($data['language'] == 'Malayalam'){
                 $logChars = stripSpacesMalayalam($logChars);
+            } else {
+                $logChars = stripSpacesTelugu($logChars);
             }
 
             array_push($charBank, $logChars);

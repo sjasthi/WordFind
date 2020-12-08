@@ -6,3 +6,50 @@
 [07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 70
 [07-Dec-2020 19:21:36 Europe/Berlin] PHP Warning:  implode(): Invalid arguments passed in C:\xampp\htdocs\WordFind\puzzle.php on line 70
 [07-Dec-2020 19:21:36 Europe/Berlin] PHP Notice:  Undefined variable: data in C:\xampp\htdocs\WordFind\puzzle.php on line 121
+[08-Dec-2020 01:33:11 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function stripSpacesTelugu() in C:\xampp\htdocs\WordFind\helpers\functions.php:227
+Stack trace:
+#0 C:\xampp\htdocs\WordFind\create_puzzle.php(9): generatePuzzle()
+#1 {main}
+  thrown in C:\xampp\htdocs\WordFind\helpers\functions.php on line 227
+[08-Dec-2020 01:35:37 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function stripSpacesTelugu() in C:\xampp\htdocs\WordFind\helpers\functions.php:227
+Stack trace:
+#0 C:\xampp\htdocs\WordFind\create_puzzle.php(9): generatePuzzle()
+#1 {main}
+  thrown in C:\xampp\htdocs\WordFind\helpers\functions.php on line 227
+[08-Dec-2020 01:36:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function stripSpacesTelugu() in C:\xampp\htdocs\WordFind\helpers\functions.php:227
+Stack trace:
+#0 C:\xampp\htdocs\WordFind\create_puzzle.php(9): generatePuzzle()
+#1 {main}
+  thrown in C:\xampp\htdocs\WordFind\helpers\functions.php on line 227
+[08-Dec-2020 01:36:06 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function stripSpacesTelugu() in C:\xampp\htdocs\WordFind\helpers\functions.php:227
+Stack trace:
+#0 C:\xampp\htdocs\WordFind\create_puzzle.php(9): generatePuzzle()
+#1 {main}
+  thrown in C:\xampp\htdocs\WordFind\helpers\functions.php on line 227
+[08-Dec-2020 01:40:26 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function stripSpacesTelugu() in C:\xampp\htdocs\WordFind\helpers\functions.php:228
+Stack trace:
+#0 C:\xampp\htdocs\WordFind\create_puzzle.php(9): generatePuzzle()
+#1 {main}
+  thrown in C:\xampp\htdocs\WordFind\helpers\functions.php on line 228
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 67 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 67 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 68 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 68 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 69 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 69 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 70 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 70 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 71 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 71 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 72 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 72 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 73 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 73 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 74 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 74 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 75 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 75 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 76 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 76 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 77 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 18
+[08-Dec-2020 01:44:23 Europe/Berlin] PHP Notice:  Undefined offset: 77 in C:\xampp\htdocs\WordFind\indic-wp\hindi_parser.php on line 21
