@@ -14,14 +14,17 @@ DEFINE('REGISTER_LINK', "http://localhost/telugupuzzles/register.php?app_id==" .
 /**/
 
 /* live 
-// this app's id
-$app_id = 6;
 // links
 DEFINE('LOGIN_LINK', "http://telugupuzzles.com/login.php?app_id=" . $app_id);
 DEFINE('LOGOUT_LINK', "http://telugupuzzles.com/logout.php");
 DEFINE('REGISTER_LINK', "http://telugupuzzles.com/register.php?app_id==" . $app_id);
 /**/
 
+/**
+ * A function which connects to the user sessions database using PDO.
+ * 
+ * @return The pdo database connection.
+ */
 function connect_to_user_sessions_db() {
     // Set DSN - data source name
     $dsn = 'mysql:host=' . USER_SESSIONS_DATABASE_HOST . ';dbname=' . USER_SESSIONS_DATABASE_NAME;
@@ -33,6 +36,14 @@ function connect_to_user_sessions_db() {
     return $sessions_pdo;
 }
 
+/**
+ * A function which takes a session id and returns the information about the user who is logged in
+ *  to that session on telugupuzzles.
+ * 
+ * @param $session_id The session id on telugupuzzles
+ * @return The relevant information for that session, or null if the session does not exist or there was
+ *  an error connecting to the database
+ */
 function get_session_info($session_id) {
     try {
         $sessions_pdo = connect_to_user_sessions_db();
@@ -57,8 +68,16 @@ function get_session_info($session_id) {
     } catch(PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
+    return null;
 }
 
+/**
+ * A function to indicate whether the user with the given user id has author access to this app, according 
+ *  to a table in the database.
+ * 
+ * @param $user_id The user to check the access of.
+ * @return True if the user has author access, false otherwise.
+ */
 function user_has_access_to_app($user_id) {
     global $app_id;
 
@@ -84,6 +103,12 @@ function user_has_access_to_app($user_id) {
     }
 }
 
+/**
+ * A function to create a session (log in) for this application.
+ * 
+ * @param $session_id The session id on telugupuzzles
+ * @return True if the session was created successfully, false otherwise
+ */
 function create_session($session_id) {
     $session_info = get_session_info($session_id);
     
@@ -92,11 +117,12 @@ function create_session($session_id) {
         return false;
     } else {
         if ($session_info['allow_login']) { // check user is allowed to login
-            // user_has_access_to_app($user_id) if app_result -> rows exist, indicate somehow that the user has access to this app
+            // indicate that the user has access to this app
             if (user_has_access_to_app($session_info['id'])) {
                 $_SESSION['author'] = true;
             }
 
+            $_SESSION['user_id'] = $session_info['id'];
             $_SESSION['email'] = $session_info['email'];
             $_SESSION['first_name'] = $session_info['first_name'];
             $_SESSION['last_name'] = $session_info['last_name'];
@@ -110,6 +136,13 @@ function create_session($session_id) {
     }
 }
 
+/**
+ * A function to set 'allow_login' to false in the database. This prevents someone using the session id
+ *  to log in to someone's account after they have logged in.
+ * 
+ * @param $session_id The session id to set 'allow_login' for
+ * @param $session_pdo The pdo connectiont to the database
+ */
 function reset_allow_login($session_id, $sessions_pdo = null) {
     if (is_null($sessions_pdo)) {
         try {
@@ -132,10 +165,14 @@ function reset_allow_login($session_id, $sessions_pdo = null) {
     }
 }
 
+/**
+ * A function to log a user out of the app, then redirect to log out of telugupuzzles.
+ */
 function logout() {
     reset_allow_login(session_id()); // double check allow login is set to false
 
     // clear the session variables
+    unset($_SESSION['user_id']);
     unset($_SESSION['email']);
     unset($_SESSION['first_name']);
     unset($_SESSION['last_name']);
@@ -152,6 +189,11 @@ function logout() {
     header("location: " . LOGOUT_LINK);
 }
 
+/**
+ * A function to check if the user is logged in to the app.
+ * 
+ * @return True if the user is logged in, false otherwise.
+ */
 function is_logged_in() {
     if (isset($_SESSION['logged_in'])) {
         return true;
@@ -160,6 +202,11 @@ function is_logged_in() {
     }
 }
 
+/**
+ * A function to check if the user has author access to the app.
+ * 
+ * @return True if the user has author access, false otherwise.
+ */
 function is_author() {
     if (isset($_SESSION['author'])) {
         return true;
