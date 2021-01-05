@@ -138,7 +138,7 @@
         ';
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['puzzle_id' => $puzzleId]);
-        redirect('index');
+        redirect('index.php');
     }
 
     function search($pdo){

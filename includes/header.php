@@ -15,8 +15,6 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css"> <!-- Must come after bootstrap css - sets circle answers border to 3 -->
-    <link rel="icon" href="images/favicon.ico">
-    <link rel=“image_src” href=“images/search.png”>
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -50,13 +48,17 @@
                     <a href="create_puzzle.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>">Create Puzzle</a>
                     <a href="?logout" class="nav-item nav-link">Logout</a>
                 <?php else: ?>
+                <!--
                     <a href="" class="nav-item nav-link" data-toggle="modal" data-target="#registerModal">Register</a>
                     <a href="" id="loginBtn" class="nav-item nav-link" data-toggle="modal" data-target="#loginModal">Login</a>
+                -->
+                    <a class="nav-item nav-link" href="<?php echo REGISTER_LINK ?>">Register</a>
+                    <a id="loginBtn" class="nav-item nav-link" href="<?php echo LOGIN_LINK ?>">Login</a>
                 <?php endif; ?>
                 </div>
 
                 <form id="search" class="form-inline" action="search.php" method="post">
-                    <span class="text-white mr-3"><?php echo (isLoggedIn()) ? 'Welcome, ' . $_SESSION['user_name'] : '' ; ?></span>
+                    <span class="text-white mr-3"><?php echo (isLoggedIn()) ? 'Welcome, ' . $_SESSION['first_name'] . ' ' . $_SESSION['last_name'] : '' ; ?></span>
                     <input class="form-control mr-sm-2" type="search" name="query" placeholder="category, title, author, date created" onfocus="this.placeholder = ''" onblur="this.placeholder = 'category, title, author, date created'" size="33" aria-label="Search" value="<?php echo isset($_POST['query']) ? $_POST['query'] : ''; ?>">
                     <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
                 </form>
