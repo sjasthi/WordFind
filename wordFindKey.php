@@ -1,3 +1,7 @@
+<?php
+require_once 'helpers/session_start.php';
+?>
+
 <!doctype html public "-//W3C//DTD HTML 4.0 //EN">
 <html>
 <head>
@@ -11,7 +15,6 @@
 <body>
 
 <?php
-session_start();
 //answer key for word find
 //called from wordFind.php
 $key = $_SESSION['keypuzzle'];

@@ -1,6 +1,6 @@
 <?php
     ob_start();
-    session_start();
+    require_once 'session_start.php';
     require_once 'user_sessions.php';
 
     // used if user clicks back btn after creating a puzzle
