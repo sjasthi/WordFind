@@ -33,12 +33,6 @@
         header('location: ' . $page);
     }
 
-    if(isset($_GET['session_id'])){
-        create_session($_GET['session_id']);
-
-        redirect('index.php');
-    }
-
     if(isset($_GET['logout'])){
         logout();
     }
