@@ -27,18 +27,82 @@
     }
 
     function getCategoryById($categoryId, $pdo){
-        $sql = "SELECT cat_name, puzzle_id, title, description, first_name, last_name, created_on
+        $sql = "SELECT cat_name, puzzle_id, title, description, user_id, created_on
                 FROM puzzles
                 LEFT JOIN categories
                 ON categories.cat_id = puzzles.cat_id
-                INNER JOIN users
-                ON users.user_id = puzzles.user_id
                 WHERE puzzles.cat_id = :category_id
         ";
             
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(['category_id' => $categoryId]);
-        return $stmt->fetchAll();
+        $stmt->bindParam(':category_id', $categoryId);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $results = add_user_data($results);
+            return $results;
+        }
+        return null;
+    }
+
+    /**
+     * A function to get the category name of a given category.
+     * 
+     * @param $categoryId The id of the category.
+     * @param $pdo The pdo instance.
+     * @return string|null The name of the given category, or null if there is no category with the given id
+     *  or something went wrong.
+     */
+    function getCategoryName($categoryId, $pdo) {
+        $sql = "SELECT cat_name
+                FROM categories
+                WHERE cat_id = :category_id";
+            
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':category_id', $categoryId);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['cat_name'];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * A function to add the user first and last name from the telugupuzzles database to an array of
+     *  puzzle data from the wordfind database. The puzzle arrays must include user_id.
+     * 
+     * @param $puzzles The puzzle data.
+     * @return array The puzzle data with the author info added to each puzzle.
+     */
+    function add_user_data(&$puzzles) {
+        foreach ($puzzles as &$puzzle) {
+            // for live
+            require_once '/home2/icsbinco/public_html/telugupuzzles/db_configuration.php';
+            // for localhost
+            //require_once '../telugupuzzles/db_configuration.php';
+            // connect to the telugupuzzles database
+            $telugu_puzzles_pdo = pdo_connect_to_db();
+
+            // prepared statement
+            $stmt = $telugu_puzzles_pdo->prepare("SELECT first_name, last_name FROM users WHERE id=:id");
+            $stmt->bindParam(':id', $puzzle['user_id']);
+            $stmt->execute();
+
+            // set user first name and last name from telugupuzzles database
+            if ($stmt->rowCount() > 0) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $puzzle['first_name'] = $user['first_name'];
+                $puzzle['last_name'] = $user['last_name'];
+            } else {
+                $puzzle['first_name'] = '';
+                $puzzle['last_name'] = '';
+            }
+        }
+        return $puzzles;
     }
 
     function getTableHeader($data){
@@ -150,24 +214,102 @@
             'query' => trim($_POST['query']),
         ];
 
-        $sql = "SELECT categories.cat_id, puzzle_id, cat_name, title, description, created_on, users.first_name, users.last_name
+        $sql = "SELECT user_id, categories.cat_id, puzzle_id, cat_name, title, description, created_on
                 FROM puzzles
                 INNER JOIN categories
                 ON puzzles.cat_id = categories.cat_id
-                INNER JOIN users
-                ON users.user_id = puzzles.user_id
                 WHERE cat_name LIKE '%' :query '%'
                 OR title LIKE '%' :query '%'
-                OR users.first_name LIKE '%' :query '%'
-                OR users.last_name LIKE '%' :query '%'
-                OR CONCAT(users.first_name, ' ', users.last_name) LIKE '%' :query '%'
+                OR description LIKE '%' :query '%'
                 OR created_on LIKE '%' :query '%'
                 ORDER BY categories.cat_id
         ";
-
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([':query' => $data['query']]);
-        return $stmt->fetchAll();
+        $stmt->bindParam(':query', $data['query']);
+        $stmt->execute();
+        $puzzles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $puzzles = add_user_data($puzzles); // add the author information from the telugupuzzles database
+
+        // search the author information from the telugupuzzles database
+        $search_authors_puzzles = search_authors($data['query'], $pdo);
+
+        if (is_null($puzzles)) {
+            return $search_authors_puzzles;
+        } elseif (is_null($search_authors_puzzles)) {
+            return $puzzles;
+        } else {
+            // merge the two arrays together and return
+            $search_results = array_merge($puzzles, $search_authors_puzzles);
+            return $search_results;
+        }
+    }
+
+    /**
+     * A function to search the authors in the telugupuzzles database and return wordfind puzzle information
+     *  for those authors.
+     * 
+     * @param $query The search query to search.
+     * @param $pdo The pdo instance.
+     * @return array|null The puzzles whose authors match the given query input.
+     */
+    function search_authors($query, $pdo) {
+        // for live
+        require_once '/home2/icsbinco/public_html/telugupuzzles/db_configuration.php';
+        // for localhost
+        //require_once '../telugupuzzles/db_configuration.php';
+        // connect to the telugupuzzles database
+        $telugu_puzzles_pdo = pdo_connect_to_db();
+
+        // get those users searched by query
+        $sql = "SELECT id, first_name, last_name
+                FROM users
+                WHERE first_name LIKE '%' :query '%'
+                OR last_name LIKE '%' :query '%'
+                OR CONCAT(first_name, ' ', last_name) LIKE '%' :query '%'";
+        // prepared statement
+        $stmt = $telugu_puzzles_pdo->prepare($sql);
+        $stmt->bindParam(':query', $query);
+        $stmt->execute();
+
+        // get puzzle data for each user
+        if ($stmt->rowCount() > 0) {
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $results = array();
+            foreach ($users as $user) {
+                // get those puzzles associated with the given user
+                $sql = "SELECT categories.cat_id, puzzle_id, cat_name, title, description, created_on
+                    FROM puzzles INNER JOIN categories ON puzzles.cat_id = categories.cat_id
+                    WHERE user_id=:user_id
+                    AND cat_name NOT LIKE '%' :query '%'
+                    AND title NOT LIKE '%' :query '%'
+                    AND description NOT LIKE '%' :query '%'
+                    AND created_on NOT LIKE '%' :query '%'
+                    ORDER BY categories.cat_id";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(':user_id', $user['id']);
+                $stmt->bindParam(':query', $query);
+                $stmt->execute();
+                if ($stmt->rowCount() > 0) {
+                    $puzzles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($puzzles as $puzzle) {
+                        $result = array();
+                        // fill out the results with user and puzzle data
+                        $result['first_name'] = $user['first_name'];
+                        $result['last_name'] = $user['last_name'];
+                        $result['cat_id'] = $puzzle['cat_id'];
+                        $result['puzzle_id'] = $puzzle['puzzle_id'];
+                        $result['cat_name'] = $puzzle['cat_name'];
+                        $result['title'] = $puzzle['title'];
+                        $result['description'] = $puzzle['description'];
+                        $result['created_on'] = $puzzle['created_on'];
+                        array_push($results, $result);
+                    }
+                }
+            }
+            return $results;
+        } else {
+            return null;
+        }
     }
 
     function generatePuzzle(){
