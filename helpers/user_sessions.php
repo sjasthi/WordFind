@@ -1,4 +1,6 @@
 <?php
+require_once 'authentication.php';
+
 ///* Local testing 
 // user sessions database information
 DEFINE('USER_SESSIONS_DATABASE_HOST', 'localhost');
@@ -6,7 +8,7 @@ DEFINE('USER_SESSIONS_DATABASE_NAME', 'puzzleapps_db');
 DEFINE('USER_SESSIONS_DATABASE_USERNAME', 'root');
 DEFINE('USER_SESSIONS_DATABASE_PASSWORD', '');
 // this app's id
-$app_id = 6;
+$app_id = 6; // note: this may be different for your local database
 // links
 DEFINE('LOGIN_LINK', "http://localhost/telugupuzzles/login.php?app_id=" . $app_id);
 DEFINE('LOGOUT_LINK', "http://localhost/telugupuzzles/logout.php");
@@ -110,8 +112,49 @@ function logout() {
  * @return True if the user is logged in, false otherwise.
  */
 function is_logged_in() {
+    developer_is_logged_in();
+
     if (isset($_SESSION['logged_in'])) {
         if ($_SESSION['logged_in']) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * A function to check if the user is an admin.
+ * 
+ * @return True if the user has admin priviledges, false otherwise.
+ */
+function is_admin() {
+    if (isset($_SESSION['role']) && is_logged_in()) {
+        if ($_SESSION['role'] == 'ADMIN' || $_SESSION['role'] == 'SUPER_ADMIN'){
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * A function to check if the user is a super-admin.
+ * 
+ * @return True if the user has super-admin priviledges, false otherwise.
+ */
+function is_super_admin() {
+    if (!isset($_SESSION['logged_in'])) {return false;}
+    if (!isset($_SESSION['role'])) {return false;}
+    return ($_SESSION['logged_in'] and $_SESSION['role'] == 'SUPER_ADMIN');
+} 
+
+/**
+ * A function to check if the user has sponsor access.
+ * 
+ * @return True if the user has sponsor access, false otherwise.
+ */
+function is_sponsor() {
+    if (isset($_SESSION['role']) && is_logged_in()) {
+        if ($_SESSION['role'] == 'SPONSOR'){
             return true;
         }
     }
@@ -134,18 +177,4 @@ function is_author($user_id) {
         }
     }
     return $_SESSION['wordfind_author'];
-}
-
-/**
- * A function to check if the user is an admin to the app.
- * 
- * @return True if the user has admin priviledges, false otherwise.
- */
-function is_admin() {
-    if (isset($_SESSION['role']) && is_logged_in()) {
-        if ($_SESSION['role'] == 'ADMIN' || $_SESSION['role'] == 'SUPER_ADMIN'){
-            return true;
-        }
-    }
-    return false;
 }

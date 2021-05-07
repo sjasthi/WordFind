@@ -87,11 +87,11 @@
                             <label class="custom-control-label" for="toggleLabels">Labels</label>
                         </div>
 
-                        <?php if(isLoggedIn()):?>
+                        <?php if(is_logged_in()):?>
                         <div class="custom-control custom-switch custom-control-inline mt-1">
                             <input type="hidden" name="toggle_solution_lines" class="toggle-solution-options" value="0">
                             <input type="checkbox" class="custom-control-input toggle-solution-options" name="toggle_solution_lines" id="toggleSolutionLines" value="1"<?php echo (isset($_COOKIE['solution_lines']) && $_COOKIE['solution_lines'] == 1) ? ' checked ' : ''; ?>>
-                            <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?> 
+                            <?php if(is_admin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?> 
                             <label class="custom-control-label" for="toggleSolutionLines">Solution</label>
                             <?php endif; ?>
                         </div>
@@ -100,7 +100,7 @@
 
                     <div id="controlBtns" class="col-auto mt-3 mt-md-0">
                         <button type="button" id="play" class="btn btn-outline-primary btn-sm">Play</button>
-                        <?php if(isAdmin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?>
+                        <?php if(is_admin() || isset($_SESSION['user_id']) && $_SESSION['user_id'] == $data['user_id']): ?>
                             <a href="edit_puzzle.php?id=<?php echo $puzzleId; ?>"><button type="button" id="edit" name = "edit_puzzle" class="btn btn-outline-primary btn-sm">Edit</button></a>
                         <button type="submit" id="delete" name="delete_puzzle" class="btn btn-outline-primary btn-sm">Delete</button>
                         <?php endif; ?>
@@ -136,7 +136,7 @@
 
 <?php
 
-    if(isLoggedIn()){
+    if(is_logged_in()){
         addSolution($data);
     }
     

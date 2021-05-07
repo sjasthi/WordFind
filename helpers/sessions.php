@@ -11,20 +11,8 @@
         header( "Pragma: no-cache" );
     }
 
-    function isLoggedIn(){
-        return is_logged_in();
-    }
-
-    function isAdmin(){
-        if(isLoggedIn() && $_SESSION['role'] == 'admin'){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     function regUser(){
-        if(!isLoggedIn()){
+        if(!is_logged_in()){
             redirect('index.php');
         }
     }

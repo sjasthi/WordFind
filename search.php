@@ -34,23 +34,23 @@
             ?>
 
 
-    <?php foreach($query as $puzzle): ?>
+    <?php if (!is_null($query)) { foreach($query as $puzzle): ?>
 
     <div class="card mt-3">
         <div class="list-group">
-            <h6 class="mb-0"><a href="puzzle.php?puzzleId=<?php echo $puzzle->puzzle_id; ?>" class="list-group-item list-group-item-action bg-light text-primary"><?php echo $puzzle->title; ?></a></h6>
+            <h6 class="mb-0"><a href="puzzle.php?puzzleId=<?php echo $puzzle['puzzle_id']; ?>" class="list-group-item list-group-item-action bg-light text-primary"><?php echo $puzzle['title']; ?></a></h6>
             <div class="card-body">
                 <p class="card-text text-muted">
-                    <?php echo $puzzle->description; ?>
-                    <br>Found in: <a href="category.php?categoryId=<?php echo $puzzle->cat_id; ?>" class="card-link"><?php echo $puzzle->cat_name; ?></a>
-                    <br>Author: <?php echo $puzzle->first_name . ' ' . $puzzle->last_name; ?>
-                    <br>Added: <?php echo $puzzle->created_on; ?>
+                    <?php echo $puzzle['description']; ?>
+                    <br>Found in: <a href="category.php?categoryId=<?php echo $puzzle['cat_id']; ?>" class="card-link"><?php echo $puzzle['cat_name']; ?></a>
+                    <br>Author: <?php echo $puzzle['first_name'] . ' ' . $puzzle['last_name']; ?>
+                    <br>Added: <?php echo $puzzle['created_on']; ?>
                 </p>
             </div>
         </div>
     </div>
 
-    <?php endforeach; ?>
+    <?php endforeach; } ?>
 
 
     <?php if(sizeof($query) != 0): ?>
