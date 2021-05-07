@@ -4,6 +4,7 @@
     require_once 'helpers/functions.php';
     require_once 'helpers/sessions.php';
     require_once 'indic-wp/word_processor.php';
+    //require_once '../indic-wp/word_processor.php';
 
     // enable error logging to a custom file
     ini_set("log_errors", 1); 
@@ -46,7 +47,7 @@
                 <div class="navbar-nav">
                     <a href="index.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find') ? ' active' : '' ; ?>">Home</a>
 
-                <?php if(isLoggedIn()) : ?>
+                <?php if(is_logged_in()) : ?>
                     <a href="create_puzzle.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>">Create Puzzle</a>
                     <a href="?logout" class="nav-item nav-link">Logout</a>
                 <?php else: ?>
@@ -60,7 +61,7 @@
                 </div>
 
                 <form id="search" class="form-inline" action="search.php" method="post">
-                    <span class="text-white mr-3"><?php echo (isLoggedIn()) ? 'Welcome, ' . $_SESSION['first_name'] . ' ' . $_SESSION['last_name'] : '' ; ?></span>
+                    <span class="text-white mr-3"><?php echo (is_logged_in()) ? 'Welcome, ' . $_SESSION['first_name'] . ' ' . $_SESSION['last_name'] : '' ; ?></span>
                     <input class="form-control mr-sm-2" type="search" name="query" placeholder="category, title, author, date created" onfocus="this.placeholder = ''" onblur="this.placeholder = 'category, title, author, date created'" size="33" aria-label="Search" value="<?php echo isset($_POST['query']) ? $_POST['query'] : ''; ?>">
                     <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
                 </form>

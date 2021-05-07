@@ -81,9 +81,9 @@
     function add_user_data(&$puzzles) {
         foreach ($puzzles as &$puzzle) {
             // for live
-            require_once '/home2/icsbinco/public_html/telugupuzzles/db_configuration.php';
+            //require_once '/home2/icsbinco/public_html/telugupuzzles/db_configuration.php';
             // for localhost
-            //require_once '../telugupuzzles/db_configuration.php';
+            require_once '../telugupuzzles/db_configuration.php';
             // connect to the telugupuzzles database
             $telugu_puzzles_pdo = pdo_connect_to_db();
 
@@ -254,9 +254,9 @@
      */
     function search_authors($query, $pdo) {
         // for live
-        require_once '/home2/icsbinco/public_html/telugupuzzles/db_configuration.php';
+        //require_once '/home2/icsbinco/public_html/telugupuzzles/db_configuration.php';
         // for localhost
-        //require_once '../telugupuzzles/db_configuration.php';
+        require_once '../telugupuzzles/db_configuration.php';
         // connect to the telugupuzzles database
         $telugu_puzzles_pdo = pdo_connect_to_db();
 
