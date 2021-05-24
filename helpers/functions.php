@@ -359,17 +359,18 @@
         foreach($rawWordBank as $word){
 
             array_push($data['word_bank'], $word);
-            $wordProcessor = new wordProcessor($word);
+            $language = $data['language'];
+            $wordProcessor = new wordProcessor($word, $language);
 
             // get logical chars of word
-            $logChars = $wordProcessor->parseToLogicalChars($word, $data['language']);
+            $logChars = $wordProcessor->parseToLogicalChars($word);
             
             // remove spaces
-           if($data['language'] == 'Hindi'){
+           if($language == 'Hindi'){
                 $logChars = stripSpacesHindi($logChars);
-            } else if($data['language'] == 'Gujarati'){
+            } else if($language == 'Gujarati'){
                 $logChars = stripSpacesGujarati($logChars);
-            } else if($data['language'] == 'Malayalam'){
+            } else if($language == 'Malayalam'){
                 $logChars = stripSpacesMalayalam($logChars);
             } else {
                 $logChars = stripSpacesTelugu($logChars);
@@ -396,7 +397,7 @@
             $data['char_bank'] = $charBank;
 
             // build board
-            if(parseList($data) == TRUE){
+            if($wordProcessor->parseList($data) == TRUE){
                 $legalBoard = FALSE;
 
                 while($legalBoard == FALSE){
@@ -404,7 +405,7 @@
                     $legalBoard = fillBoard($data);
                 }
 
-                addFoils($data);
+                $wordProcessor->addFoils($data);
                 
                 // set legalBoard to data
                 global $board, $solutionDirections, $answerCoords;
