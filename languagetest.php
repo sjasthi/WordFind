@@ -1,5 +1,4 @@
-﻿<?php require_once 'helpers/indic_wp.php'; ?>
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 	<title>Telugu WP Unit Tester</title>
@@ -24,6 +23,7 @@
 -->
 
 <?PHP
+require("indic-wp/word_processor.php");
 
 	$unique_tests = array();
 	$unique_good = array();

@@ -3,7 +3,7 @@
     require_once 'db.php';
     require_once 'helpers/functions.php';
     require_once 'helpers/sessions.php';
-    require_once 'helpers/indic_wp.php';
+    require_once 'indic-wp/word_processor.php';
     //require_once '../indic-wp/word_processor.php';
 
     // enable error logging to a custom file
@@ -47,10 +47,8 @@
                 <div class="navbar-nav">
                     <a href="index.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find') ? ' active' : '' ; ?>">Home</a>
 
-                <?php if(is_logged_in()) : 
-                    //if (has_puzzle_creation_access()) { (for next github update) ?>
-                        <a href="create_puzzle.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>">Create Puzzle</a>
-                    <?php //} (for next github update)  ?>
+                <?php if(is_logged_in()) : ?>
+                    <a href="create_puzzle.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>">Create Puzzle</a>
                     <a href="?logout" class="nav-item nav-link">Logout</a>
                 <?php else: ?>
                 <!--
