@@ -44,7 +44,7 @@ Use the following instructions to log in to this app for development purposes on
      - $logged_in, $sponsor = true;
      - $admin, $super_admin, $author = false;
 
-Note: Do _not_ upload 'helpers/authentication.php' to a live hosted website with $development_environment set to true.
+Note: Do _not_ upload 'helpers/authentication.php' to the live hosted website with $development_environment set to true.
 
 ## Future Enhancements
 

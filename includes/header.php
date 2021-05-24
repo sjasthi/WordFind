@@ -3,8 +3,8 @@
     require_once 'db.php';
     require_once 'helpers/functions.php';
     require_once 'helpers/sessions.php';
-    require_once 'indic-wp/word_processor.php';
-    //require_once '../indic-wp/word_processor.php';
+    require_once 'helpers/indic-wp.php';
+    //require_once 'indic-wp/word_processor.php';
 
     // enable error logging to a custom file
     ini_set("log_errors", 1); 
