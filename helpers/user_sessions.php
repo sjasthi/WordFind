@@ -1,19 +1,6 @@
 <?php
 require_once 'authentication.php';
-
-///* Local testing 
-// user sessions database information
-DEFINE('USER_SESSIONS_DATABASE_HOST', 'localhost');
-DEFINE('USER_SESSIONS_DATABASE_NAME', 'puzzleapps_db');
-DEFINE('USER_SESSIONS_DATABASE_USERNAME', 'root');
-DEFINE('USER_SESSIONS_DATABASE_PASSWORD', '');
-// this app's id
-$app_id = 6; // note: this may be different for your local database
-// links
-DEFINE('LOGIN_LINK', "http://localhost/telugupuzzles/login.php?app_id=" . $app_id);
-DEFINE('LOGOUT_LINK', "http://localhost/telugupuzzles/logout.php");
-DEFINE('REGISTER_LINK', "http://localhost/telugupuzzles/register.php?app_id==" . $app_id);
-/**/
+require_once 'telugupuzzles_db.php';
 
 /**
  * A function which connects to the user sessions database using PDO.
@@ -176,5 +163,29 @@ function is_author($user_id) {
             $_SESSION['wordfind_author'] = false;
         }
     }
-    return $_SESSION['wordfind_author'];
+    if (isset($_SESSION['wordfind_author'])) {
+        return $_SESSION['wordfind_author'];
+    }
+    return false;
+}
+
+/**
+ * A function to check whether the user has access to the 'create puzzle' functionality.
+ * 
+ * @return boolean True if the user is logged in and has access, false if the user does not have access or
+ *  is not logged in.
+ */
+function has_puzzle_creation_access() {
+    if (is_logged_in()) {
+        if (is_admin()) {
+            // admins have access to create puzzle functionality
+            return true; 
+        } else if (isset($_SESSION['user_id'])) {
+            if (is_author($_SESSION['user_id'])) {
+                // authors have access to create puzzle functionality
+                return true;
+            }
+        }
+    }
+    return false;
 }
