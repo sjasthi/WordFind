@@ -47,8 +47,10 @@
                 <div class="navbar-nav">
                     <a href="index.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find') ? ' active' : '' ; ?>">Home</a>
 
-                <?php if(is_logged_in()) : ?>
-                    <a href="create_puzzle.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>">Create Puzzle</a>
+                <?php if(is_logged_in()) : 
+                    if (has_puzzle_creation_access()) { ?>
+                        <a href="create_puzzle.php" class="nav-item nav-link <?php echo ($pageTitle == 'Word Find Puzzle Maker') ? ' active' : '' ; ?>">Create Puzzle</a>
+                    <?php } ?>
                     <a href="?logout" class="nav-item nav-link">Logout</a>
                 <?php else: ?>
                 <!--

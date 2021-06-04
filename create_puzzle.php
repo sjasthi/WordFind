@@ -1,8 +1,9 @@
-<?php 
+<?php
+    // check if user has access to this page
+    include 'includes/puzzle_creation_access.php';
+
     $pageTitle = 'Word Find Puzzle Maker';
     include 'includes/header.php';
-
-    reguser();
 
     // display puzzle to user
     if(isset($_POST['generate_puzzle'])){
